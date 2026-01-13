@@ -1,0 +1,263 @@
+[
+    {
+        "group": "email",
+        "key": "verify_email_title",
+        "text": {
+            "en": "Verify Email Address",
+            "fr": "Vérification de votre adresse email",
+            "pt": "Verificar endereço de e-mail"
+        }
+    },
+    {
+        "group": "email",
+        "key": "verify_email_text",
+        "text": {
+            "en": "Welcome! We are delighted to have you with us. To complete your registration, click the button below:",
+            "fr": "Bienvenue ! Nous sommes ravis de vous avoir parmi nous. Pour finaliser votre inscription, cliquez sur le bouton ci-dessous :",
+            "pt": "Bem-vindo! Estamos felizes em tê-lo conosco. Para completar seu registro, clique no botão abaixo:"
+        }
+    },
+    {
+        "group": "email",
+        "key": "verify_email_button",
+        "text": {
+            "en": "Confirm my email",
+            "fr": "Confirmer mon email",
+            "pt": "Confirmar meu e-mail"
+        }
+    },
+    {
+        "group": "email",
+        "key": "reset_password_title",
+        "text": {
+            "en": "Reset password",
+            "fr": "Réinitialisation de votre mot de passe",
+            "pt": "Redefinir senha"
+        }
+    },
+    {
+        "group": "email",
+        "key": "reset_password_text",
+        "text": {
+            "en": "You have requested to reset your password. Click the button below to change it:",
+            "fr": "Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous pour le modifier :",
+            "pt": "Você solicitou redefinir sua senha. Clique no botão abaixo para alterá-la:"
+        }
+    },
+    {
+        "group": "email",
+        "key": "reset_password_button",
+        "text": {
+            "en": "Reset password",
+            "fr": "Réinitialiser le mot de passe",
+            "pt": "Redefinir senha"
+        }
+    },
+    {
+        "group": "email",
+        "key": "account_blocked_title",
+        "text": {
+            "en": "Account blocked",
+            "fr": "Votre compte a été bloqué",
+            "pt": "Conta bloqueada"
+        }
+    },
+    {
+        "group": "email",
+        "key": "account_blocked_text",
+        "text": {
+            "en": "Your account has been temporarily blocked for security reasons. For more information or to appeal this decision, please contact our support team.",
+            "fr": "Votre compte a été temporairement bloqué pour des raisons de sécurité. Pour plus d'informations ou pour faire appel de cette décision, veuillez contacter notre équipe support.",
+            "pt": "Sua conta foi temporariamente bloqueada por razões de segurança. Para mais informações ou para contestar esta decisão, entre em contato com nossa equipe de suporte."
+        }
+    },
+    {
+        "group": "email",
+        "key": "account_blocked_button",
+        "text": {
+            "en": "Contact support",
+            "fr": "Contacter le support",
+            "pt": "Contatar suporte"
+        }
+    },
+    {
+        "group": "email",
+        "key": "account_unblocked_title",
+        "text": {
+            "en": "Account unblocked",
+            "fr": "Votre compte a été débloqué",
+            "pt": "Conta desbloqueada"
+        }
+    },
+    {
+        "group": "email",
+        "key": "account_unblocked_text",
+        "text": {
+            "en": "Good news! Your account has been successfully unblocked. You can now log in normally to your personal space.",
+            "fr": "Bonne nouvelle ! Votre compte a été débloqué avec succès. Vous pouvez maintenant vous connecter normalement à votre espace personnel.",
+            "pt": "Boas notícias! Sua conta foi desbloqueada com sucesso. Agora você pode fazer login normalmente em seu espaço pessoal."
+        }
+    },
+    {
+        "group": "email",
+        "key": "account_unblocked_button",
+        "text": {
+            "en": "Sign in",
+            "fr": "Se connecter",
+            "pt": "Entrar"
+        }
+    },
+    {
+        "group": "email",
+        "key": "security_reminder_title",
+        "text": {
+            "en": "Security reminder",
+            "fr": "Rappel de sécurité",
+            "pt": "Lembrete de segurança"
+        }
+    },
+    {
+        "group": "email",
+        "key": "security_reminder_text",
+        "text": {
+            "en": "For enhanced security, we recommend changing your password regularly. Click the button below to update it:",
+            "fr": "Pour plus de sécurité, nous vous prions de changer régulièrement votre mot de passe. Cliquez sur le bouton ci-dessous pour le modifier :",
+            "pt": "Para maior segurança, recomendamos alterar sua senha regularmente. Clique no botão abaixo para atualizá-la:"
+        }
+    },
+    {
+        "group": "email",
+        "key": "security_reminder_button",
+        "text": {
+            "en": "Change password",
+            "fr": "Modifier le mot de passe",
+            "pt": "Alterar senha"
+        }
+    },
+    {
+        "group": "email",
+        "key": "default_title",
+        "text": {
+            "en": "Important notification",
+            "fr": "Notification importante",
+            "pt": "Notificação importante"
+        }
+    },
+    {
+        "group": "email",
+        "key": "default_text",
+        "text": {
+            "en": "You have received an important notification. Click the button below to access your account:",
+            "fr": "Vous avez reçu une notification importante. Cliquez sur le bouton ci-dessous pour accéder à votre compte :",
+            "pt": "Você recebeu uma notificação importante. Clique no botão abaixo para acessar sua conta:"
+        }
+    },
+    {
+        "group": "email",
+        "key": "default_button",
+        "text": {
+            "en": "Access my account",
+            "fr": "Accéder à mon compte",
+            "pt": "Acessar minha conta"
+        }
+    },
+    {
+        "group": "email",
+        "key": "footer_disclaimer",
+        "text": {
+            "en": "If you did not request this email, you can safely ignore it.",
+            "fr": "Si vous n'avez pas demandé cet e-mail, vous pouvez l'ignorer en toute sécurité.",
+            "pt": "Se você não solicitou este e-mail, pode ignorá-lo com segurança."
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_greeting",
+        "text": {
+            "en": "Sign in to",
+            "fr": "Se connecter à",
+            "pt": "Entrar em"
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_copy",
+        "text": {
+            "en": "We received a sign-in request for the account :email. Use the code below to sign in.",
+            "fr": "Nous avons reçu une demande de connexion pour le compte :email. Utilisez le code ci-dessous pour vous connecter.",
+            "pt": "Recebemos uma solicitação de login para a conta :email. Use o código abaixo para entrar."
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_subcopy",
+        "text": {
+            "en": "If you didn't request this login link, you can safely ignore this email.",
+            "fr": "Si vous n'avez pas demandé ce lien de connexion, vous pouvez ignorer cet e-mail en toute sécurité.",
+            "pt": "Se você não solicitou este link de login, pode ignorar este e-mail com segurança."
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_security_footer",
+        "text": {
+            "en": "Security Reminder: Fraudulent websites may try to steal your login code. Only enter this code at :app_url. Never enter this code on any other website or share it with anyone.",
+            "fr": "Rappel de sécurité : Des sites web frauduleux peuvent essayer de voler votre code de connexion. Ne saisissez ce code que sur :app_url. Ne saisissez jamais ce code sur un autre site web et ne le partagez avec personne.",
+            "pt": "Lembrete de Segurança: Sites fraudulentos podem tentar roubar seu código de login. Digite este código apenas em :app_url. Nunca digite este código em outro site ou compartilhe com alguém."
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_notification_hello",
+        "text": {
+            "en": "Hello!",
+            "fr": "Bonjour !",
+            "pt": "Olá!"
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_notification_intro",
+        "text": {
+            "en": "Click the button below to securely log in to your account:",
+            "fr": "Cliquez sur le bouton ci-dessous pour vous connecter en toute sécurité à votre compte :",
+            "pt": "Clique no botão abaixo para fazer login com segurança na sua conta:"
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_notification_button",
+        "text": {
+            "en": "Sign-In to",
+            "fr": "Se connecter à",
+            "pt": "Entrar em"
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_notification_outro",
+        "text": {
+            "en": "This link expires after 5 minutes and can only be used once.",
+            "fr": "Ce lien expire après 5 minutes et ne peut être utilisé qu'une seule fois.",
+            "pt": "Este link expira após 5 minutos e só pode ser usado uma vez."
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_notification_thanks",
+        "text": {
+            "en": "Thank you for using",
+            "fr": "Merci d'utiliser",
+            "pt": "Obrigado por usar"
+        }
+    },
+    {
+        "group": "email",
+        "key": "otpz_notification_trouble",
+        "text": {
+            "en": "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below into your web browser:",
+            "fr": "Si vous avez des difficultés à cliquer sur le bouton \":actionText\", copiez et collez l'URL ci-dessous dans votre navigateur web :",
+            "pt": "Se você está tendo problemas ao clicar no botão \":actionText\", copie e cole a URL abaixo no seu navegador:"
+        }
+    }
+]

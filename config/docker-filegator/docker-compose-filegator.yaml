@@ -1,0 +1,30 @@
+services:
+  sftp-server:
+    image: atmoz/sftp
+    container_name: sftp-server
+    restart: unless-stopped
+    ports:
+      - "2222:22"
+    volumes:
+      - ./filegator_files:/home/sftp-user/files
+    command: sftp-user:sftp-pass:33:33:::0000  # umask 0000 = 777 dir / 666 file
+
+  filegator:
+    image: filegator/filegator
+    container_name: filegator
+    restart: unless-stopped
+    ports:
+      - "8086:8080"
+    user: "33:33"
+    volumes:
+      - ./filegator_files:/var/www/filegator/repository
+      - ./filegator_config/configuration.php:/var/www/filegator/private/configuration.php
+    environment:
+      - APP_USERNAME=admin
+      - APP_PASSWORD=$2y$10$2EXEMPLEOEUdFe.Yls8gEeuPqTP3KzN8AK6TosQ4pN7t5yf3le  # bcrypt hash de ton mot de passe
+      - APP_PASSWORD_TYPE=bcrypt
+      - PERMISSIONS_READ=true
+      - PERMISSIONS_WRITE=true
+      - PERMISSIONS_UPLOAD=true
+      - PERMISSIONS_DELETE=true
+      - PERMISSIONS_CREATE=true

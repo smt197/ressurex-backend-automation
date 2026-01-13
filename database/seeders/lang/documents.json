@@ -1,0 +1,101 @@
+[
+    {
+        "group": "documents",
+        "key": "list",
+        "text": {
+            "en": "Documents list.",
+            "fr": "Liste des Documents.",
+            "pt": "Lista de Documentos."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "show",
+        "text": {
+            "en": "document details retrieved successfully.",
+            "fr": "Détails du document récupérés avec succès.",
+            "pt": "Detalhes do Documento recuperados com sucesso."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "created",
+        "text": {
+            "en": "document created successfully.",
+            "fr": "document créé avec succès.",
+            "pt": "Documento criado com sucesso."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "updated",
+        "text": {
+            "en": "Document updated successfully.",
+            "fr": "Utilisateur mis à jour avec succès.",
+            "pt": "Documento atualizado com sucesso."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "deleted",
+        "text": {
+            "en": "document deleted successfully.",
+            "fr": "document supprimé avec succès.",
+            "pt": "Documento excluído com sucesso."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "not_found",
+        "text": {
+            "en": "documents not found.",
+            "fr": "Utilisateur non trouvé.",
+            "pt": "Documentos não encontrado."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "processing_started",
+        "text": {
+            "en": "Uploading...",
+            "fr": "Telechargement en cours...",
+            "pt": "Transferir começado..."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "processing_succes",
+        "text": {
+            "en": "All files processed successfully",
+            "fr": "Tous les fichiers ont été traités avec succès",
+            "pt": "Todos os arquivos processados com sucesso"
+        }
+    },
+    {
+        "group": "documents",
+        "key": "no_files_to_process",
+        "text": {
+            "en": "No files to process. Please upload files before saving.",
+            "fr": "Aucun fichier à traiter. Veuillez télécharger des fichiers avant d'enregistrer.",
+            "pt": "Nenhum arquivo para processar. Por favor, carregue os arquivos antes de salvar."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "no_valid_files_to_process",
+        "text": {
+            "en": "No valid files to process. All uploaded files were rejected or removed.",
+            "fr": "Aucun fichier valide à traiter. Tous les fichiers téléchargés ont été rejetés ou supprimés.",
+            "pt": "Nenhum arquivo válido para processar. Todos os arquivos carregados foram rejeitados ou removidos."
+        }
+    },
+    {
+        "group": "documents",
+        "key": "document_created_notification",
+        "text": {
+            "en": "A new document has been created successfully.",
+            "fr": "Un nouveau document a été créé avec succès.",
+            "pt": "Um novo documento foi criado com sucesso."
+        }
+    }
+]

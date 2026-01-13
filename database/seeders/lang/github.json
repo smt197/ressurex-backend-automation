@@ -1,0 +1,281 @@
+[
+    {
+        "group": "github",
+        "key": "list",
+        "text": {
+            "en": "GitHub repositories list.",
+            "fr": "Liste des dépôts GitHub.",
+            "pt": "Lista de repositórios GitHub."
+        }
+    },
+    {
+        "group": "github",
+        "key": "show",
+        "text": {
+            "en": "Repository details retrieved successfully.",
+            "fr": "Détails du dépôt récupérés avec succès.",
+            "pt": "Detalhes do repositório recuperados com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "created",
+        "text": {
+            "en": "Repository created successfully.",
+            "fr": "Dépôt créé avec succès.",
+            "pt": "Repositório criado com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "updated",
+        "text": {
+            "en": "Repository updated successfully.",
+            "fr": "Dépôt mis à jour avec succès.",
+            "pt": "Repositório atualizado com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "deleted",
+        "text": {
+            "en": "Repository deleted successfully.",
+            "fr": "Dépôt supprimé avec succès.",
+            "pt": "Repositório excluído com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "not_found",
+        "text": {
+            "en": "Repository not found.",
+            "fr": "Dépôt non trouvé.",
+            "pt": "Repositório não encontrado."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_list",
+        "text": {
+            "en": "Branches retrieved successfully.",
+            "fr": "Liste des branches récupérée avec succès.",
+            "pt": "Lista de branches recuperada com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_created",
+        "text": {
+            "en": "Branch created successfully.",
+            "fr": "Branche créée avec succès.",
+            "pt": "Branch criada com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_updated",
+        "text": {
+            "en": "Branch updated successfully.",
+            "fr": "Branche mise à jour avec succès.",
+            "pt": "Branch atualizada com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_deleted",
+        "text": {
+            "en": "Branch deleted successfully.",
+            "fr": "Branche supprimée avec succès.",
+            "pt": "Branch excluída com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_protected",
+        "text": {
+            "en": "Branch protected successfully.",
+            "fr": "Branche protégée avec succès.",
+            "pt": "Branch protegida com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_unprotected",
+        "text": {
+            "en": "Branch unprotected successfully.",
+            "fr": "Protection de la branche retirée avec succès.",
+            "pt": "Proteção da branch removida com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_not_found",
+        "text": {
+            "en": "Branch not found.",
+            "fr": "Branche non trouvée.",
+            "pt": "Branch não encontrada."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_already_exists",
+        "text": {
+            "en": "Branch already exists.",
+            "fr": "La branche existe déjà.",
+            "pt": "A branch já existe."
+        }
+    },
+    {
+        "group": "github",
+        "key": "cannot_delete_default_branch",
+        "text": {
+            "en": "Cannot delete the default branch.",
+            "fr": "Impossible de supprimer la branche par défaut.",
+            "pt": "Não é possível excluir a branch padrão."
+        }
+    },
+    {
+        "group": "github",
+        "key": "synced",
+        "text": {
+            "en": "Repository synced successfully.",
+            "fr": "Dépôt synchronisé avec succès.",
+            "pt": "Repositório sincronizado com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "sync_from_github_success",
+        "text": {
+            "en": "Repositories synced from GitHub successfully.",
+            "fr": "Dépôts synchronisés depuis GitHub avec succès.",
+            "pt": "Repositórios sincronizados do GitHub com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "sync_error",
+        "text": {
+            "en": "Error syncing repository.",
+            "fr": "Erreur lors de la synchronisation du dépôt.",
+            "pt": "Erro ao sincronizar o repositório."
+        }
+    },
+    {
+        "group": "github",
+        "key": "branch_error",
+        "text": {
+            "en": "Error managing branch.",
+            "fr": "Erreur lors de la gestion de la branche.",
+            "pt": "Erro ao gerenciar a branch."
+        }
+    },
+    {
+        "group": "github",
+        "key": "settings.index",
+        "text": {
+            "en": "Settings retrieved successfully.",
+            "fr": "Paramètres récupérés avec succès.",
+            "pt": "Definições recuperadas com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "settings.created",
+        "text": {
+            "en": "Settings created successfully.",
+            "fr": "Paramètres créés avec succès.",
+            "pt": "Definições criadas com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "settings.updated",
+        "text": {
+            "en": "Settings updated successfully.",
+            "fr": "Paramètres mis à jour avec succès.",
+            "pt": "Definições atualizadas com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "settings.deleted",
+        "text": {
+            "en": "Settings deleted successfully.",
+            "fr": "Paramètres supprimés avec succès.",
+            "pt": "Definições excluídas com sucesso."
+        }
+    },
+    {
+        "group": "github",
+        "key": "settings.not_found",
+        "text": {
+            "en": "Settings not found.",
+            "fr": "Paramètres non trouvés.",
+            "pt": "Definições não encontradas."
+        }
+    },
+    {
+        "group": "github",
+        "key": "test.token_missing",
+        "text": {
+            "en": "GitHub token not configured.",
+            "fr": "Jeton GitHub non configuré.",
+            "pt": "Token do GitHub não configurado."
+        }
+    },
+    {
+        "group": "github",
+        "key": "test.connection_failed",
+        "text": {
+            "en": "Unable to connect to GitHub API. Please check your token.",
+            "fr": "Impossible de se connecter à l'API GitHub. Veuillez vérifier votre jeton.",
+            "pt": "Não foi possível conectar à API do GitHub. Verifique seu token."
+        }
+    },
+    {
+        "group": "github",
+        "key": "test.success",
+        "text": {
+            "en": "GitHub connection successful.",
+            "fr": "Connexion GitHub réussie.",
+            "pt": "Conexão com GitHub bem-sucedida."
+        }
+    },
+    {
+        "group": "github",
+        "key": "test.error",
+        "text": {
+            "en": "Error testing GitHub connection.",
+            "fr": "Erreur lors du test de la connexion GitHub.",
+            "pt": "Erro ao testar a conexão com o GitHub."
+        }
+    },
+    {
+        "group": "github",
+        "key": "module.push_success",
+        "text": {
+            "en": "Module files pushed successfully to GitHub.",
+            "fr": "Fichiers du module poussés avec succès sur GitHub.",
+            "pt": "Arquivos do módulo enviados com sucesso para o GitHub."
+        }
+    },
+    {
+        "group": "github",
+        "key": "module.push_error",
+        "text": {
+            "en": "Error pushing module files to GitHub.",
+            "fr": "Erreur lors du push des fichiers du module sur GitHub.",
+            "pt": "Erro ao enviar arquivos do módulo para o GitHub."
+        }
+    },
+    {
+        "group": "github",
+        "key": "module.branch_created",
+        "text": {
+            "en": "Branch created successfully.",
+            "fr": "Branche créée avec succès.",
+            "pt": "Branch criado com sucesso."
+        }
+    }
+]

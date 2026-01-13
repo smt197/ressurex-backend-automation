@@ -1,0 +1,56 @@
+[
+    {
+        "group": "menus",
+        "key": "list",
+        "text": {
+            "en": "menus list.",
+            "fr": "Liste des menus.",
+            "pt": "Lista de menus."
+        }
+    },
+    {
+        "group": "menus",
+        "key": "show",
+        "text": {
+            "en": "menus details retrieved successfully.",
+            "fr": "Détails du menus récupérés avec succès.",
+            "pt": "Detalhes do Menus recuperados com sucesso."
+        }
+    },
+    {
+        "group": "menus",
+        "key": "created",
+        "text": {
+            "en": "menus created successfully.",
+            "fr": "menus créé avec succès.",
+            "pt": "menus criado com sucesso."
+        }
+    },
+    {
+        "group": "menus",
+        "key": "updated",
+        "text": {
+            "en": "menus updated successfully.",
+            "fr": "menus mis à jour avec succès.",
+            "pt": "menus atualizado com sucesso."
+        }
+    },
+    {
+        "group": "menus",
+        "key": "deleted",
+        "text": {
+            "en": "menus deleted successfully.",
+            "fr": "menus supprimé avec succès.",
+            "pt": "menuso excluído com sucesso."
+        }
+    },
+    {
+        "group": "menus",
+        "key": "not_found",
+        "text": {
+            "en": "menus not found.",
+            "fr": "menus non trouvé.",
+            "pt": "menus não encontrado."
+        }
+    }
+]

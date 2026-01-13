@@ -1,0 +1,42 @@
+    protected function performStore(Request $request, $model, array $attributes): void
+    {
+        // Ajouter l'utilisateur connecté
+        $attributes['user_id'] = $request->user()->id;
+
+        // Créer le repository sur GitHub
+        $githubApi = new GithubApiService();
+
+        $githubData = [
+            'name' => $attributes['name'],
+            'description' => $attributes['description'] ?? null,
+            'private' => $attributes['private'] ?? false,
+            'auto_init' => true, // Initialize with README
+        ];
+
+        $result = $githubApi->createRepositoryOnGithub($githubData);
+
+        if (!$result) {
+            throw new \Exception(__('github.sync_error') . ' Failed to create repository on GitHub.');
+        }
+
+        // Ajouter les données retournées par GitHub
+        $attributes['github_id'] = $result['id'];
+        $attributes['full_name'] = $result['full_name'];
+        $attributes['owner'] = $result['owner']['login'];
+        $attributes['html_url'] = $result['html_url'];
+        $attributes['default_branch'] = $result['default_branch'] ?? 'main';
+        $attributes['visibility'] = $result['visibility'] ?? ($result['private'] ? 'private' : 'public');
+        $attributes['is_owner'] = true;
+        $attributes['last_synced_at'] = now();
+
+        parent::performStore($request, $model, $attributes);
+
+        // Synchroniser les branches après création
+        if (isset($result['default_branch'])) {
+            try {
+                $this->syncRepositoryBranches($githubApi, $model, $result['owner']['login'], $result['name']);
+            } catch (\Exception $e) {
+                Log::warning("Could not sync initial branches for {$result['full_name']}: " . $e->getMessage());
+            }
+        }
+    }

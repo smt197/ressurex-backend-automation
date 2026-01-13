@@ -1,0 +1,56 @@
+[
+    {
+        "group": "modules",
+        "key": "list",
+        "text": {
+            "en": "modules list.",
+            "fr": "Liste des modules.",
+            "pt": "Lista de modules."
+        }
+    },
+    {
+        "group": "modules",
+        "key": "show",
+        "text": {
+            "en": "modules details retrieved successfully.",
+            "fr": "Détails du modules récupérés avec succès.",
+            "pt": "Detalhes do modules recuperados com sucesso."
+        }
+    },
+    {
+        "group": "modules",
+        "key": "created",
+        "text": {
+            "en": "modules created successfully.",
+            "fr": "modules créé avec succès.",
+            "pt": "modules criado com sucesso."
+        }
+    },
+    {
+        "group": "modules",
+        "key": "updated",
+        "text": {
+            "en": "modules updated successfully.",
+            "fr": "modules mis à jour avec succès.",
+            "pt": "modules atualizado com sucesso."
+        }
+    },
+    {
+        "group": "modules",
+        "key": "deleted",
+        "text": {
+            "en": "modules deleted successfully.",
+            "fr": "modules supprimé avec succès.",
+            "pt": "modulo excluído com sucesso."
+        }
+    },
+    {
+        "group": "modules",
+        "key": "not_found",
+        "text": {
+            "en": "modules not found.",
+            "fr": "modules non trouvé.",
+            "pt": "modules não encontrado."
+        }
+    }
+]

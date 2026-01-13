@@ -1,0 +1,83 @@
+[
+    {
+        "group": "user",
+        "key": "list",
+        "text": {
+            "en": "Users list.",
+            "fr": "Liste des utilisateurs.",
+            "pt": "Lista de usuários."
+        }
+    },
+    {
+        "group": "user",
+        "key": "show",
+        "text": {
+            "en": "User details retrieved successfully.",
+            "fr": "Détails de l'utilisateur récupérés avec succès.",
+            "pt": "Detalhes do usuário recuperados com sucesso."
+        }
+    },
+    {
+        "group": "user",
+        "key": "created",
+        "text": {
+            "en": "User created successfully.",
+            "fr": "Utilisateur créé avec succès.",
+            "pt": "Usuário criado com sucesso."
+        }
+    },
+    {
+        "group": "user",
+        "key": "updated",
+        "text": {
+            "en": "User updated successfully.",
+            "fr": "Utilisateur mis à jour avec succès.",
+            "pt": "Usuário atualizado com sucesso."
+        }
+    },
+    {
+        "group": "user",
+        "key": "deleted",
+        "text": {
+            "en": "User deleted successfully.",
+            "fr": "Utilisateur supprimé avec succès.",
+            "pt": "Usuário excluído com sucesso."
+        }
+    },
+    {
+        "group": "user",
+        "key": "not_found",
+        "text": {
+            "en": "User not found.",
+            "fr": "Utilisateur non trouvé.",
+            "pt": "Usuário não encontrado."
+        }
+    },
+    {
+        "group": "user",
+        "key": "blocked",
+        "text": {
+            "en": "User is blocked.",
+            "fr": "L'utilisateur est bloqué.",
+            "pt": "O usuário está bloqueado."
+        }
+    },
+    {
+        "group": "user",
+        "key": "unblocked",
+        "text": {
+            "en": "User is unblocked.",
+            "fr": "L'utilisateur est débloqué.",
+            "pt": "O usuário está desbloqueado."
+        }
+    },
+    {
+        "group": "user",
+        "key": "message_blocked",
+        "text": {
+            "en": "Your account has been suspended. Please contact support.",
+            "fr": "Votre compte a été suspendu. Veuillez contacter le support.",
+            "pt": "Sua conta foi suspensa. Por favor, contate o suporte."
+        }
+    }
+]

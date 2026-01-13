@@ -1,0 +1,47 @@
+[
+    {
+        "group": "permissions",
+        "key": "list",
+        "text": {
+            "en": "Permissions list.",
+            "fr": "Liste des Permissions.",
+            "pt": "Lista de permicio."
+        }
+    },
+    {
+        "group": "permissions",
+        "key": "browse_admin_create",
+        "text": {
+            "en": "Create user",
+            "fr": "Créer un utilisateur",
+            "pt": "Criar usuário"
+        }
+    },
+    {
+        "group": "permissions",
+        "key": "browse_admin_read",
+        "text": {
+            "en": "View user",
+            "fr": "Voir l'utilisateur",
+            "pt": "Ver usuário"
+        }
+    },
+    {
+        "group": "permissions",
+        "key": "browse_admin_update",
+        "text": {
+            "en": "Update user",
+            "fr": "Modifier l'utilisateur",
+            "pt": "Atualizar usuário"
+        }
+    },
+    {
+        "group": "permissions",
+        "key": "browse_admin_delete",
+        "text": {
+            "en": "Delete user",
+            "fr": "Supprimer l'utilisateur",
+            "pt": "Excluir usuário"
+        }
+    }
+]

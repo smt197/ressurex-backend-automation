@@ -1,0 +1,124 @@
+    /**
+     * Create a blob (file content) on GitHub
+     */
+    public function createBlob(string $owner, string $repo, string $content): ?array
+    {
+        try {
+            $response = Http::withHeaders($this->getHeaders())
+                ->post("{$this->baseUrl}/repos/{$owner}/{$repo}/git/blobs", [
+                    'content' => base64_encode($content),
+                    'encoding' => 'base64'
+                ]);
+
+            if (!$response->successful()) {
+                Log::error("GitHub API Error creating blob for {$owner}/{$repo}: " . $response->body());
+                return null;
+            }
+
+            return $response->json();
+
+        } catch (\Exception $e) {
+            Log::error("Error creating blob for {$owner}/{$repo}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Create a tree on GitHub
+     */
+    public function createTree(string $owner, string $repo, array $tree, ?string $baseTree = null): ?array
+    {
+        try {
+            $data = ['tree' => $tree];
+            if ($baseTree) {
+                $data['base_tree'] = $baseTree;
+            }
+
+            $response = Http::withHeaders($this->getHeaders())
+                ->post("{$this->baseUrl}/repos/{$owner}/{$repo}/git/trees", $data);
+
+            if (!$response->successful()) {
+                Log::error("GitHub API Error creating tree for {$owner}/{$repo}: " . $response->body());
+                return null;
+            }
+
+            return $response->json();
+
+        } catch (\Exception $e) {
+            Log::error("Error creating tree for {$owner}/{$repo}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Create a commit on GitHub
+     */
+    public function createCommit(string $owner, string $repo, string $message, string $treeSha, array $parents): ?array
+    {
+        try {
+            $response = Http::withHeaders($this->getHeaders())
+                ->post("{$this->baseUrl}/repos/{$owner}/{$repo}/git/commits", [
+                    'message' => $message,
+                    'tree' => $treeSha,
+                    'parents' => $parents
+                ]);
+
+            if (!$response->successful()) {
+                Log::error("GitHub API Error creating commit for {$owner}/{$repo}: " . $response->body());
+                return null;
+            }
+
+            return $response->json();
+
+        } catch (\Exception $e) {
+            Log::error("Error creating commit for {$owner}/{$repo}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Update a reference (like a branch) on GitHub
+     */
+    public function updateRef(string $owner, string $repo, string $ref, string $sha, bool $force = false): ?array
+    {
+        try {
+            $response = Http::withHeaders($this->getHeaders())
+                ->patch("{$this->baseUrl}/repos/{$owner}/{$repo}/git/refs/{$ref}", [
+                    'sha' => $sha,
+                    'force' => $force
+                ]);
+
+            if (!$response->successful()) {
+                Log::error("GitHub API Error updating ref {$ref} for {$owner}/{$repo}: " . $response->body());
+                return null;
+            }
+
+            return $response->json();
+
+        } catch (\Exception $e) {
+            Log::error("Error updating ref {$ref} for {$owner}/{$repo}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get a reference (like a branch) from GitHub
+     */
+    public function getRef(string $owner, string $repo, string $ref): ?array
+    {
+        try {
+            $response = Http::withHeaders($this->getHeaders())
+                ->get("{$this->baseUrl}/repos/{$owner}/{$repo}/git/refs/{$ref}");
+
+            if (!$response->successful()) {
+                Log::error("GitHub API Error getting ref {$ref} for {$owner}/{$repo}: " . $response->body());
+                return null;
+            }
+
+            return $response->json();
+
+        } catch (\Exception $e) {
+            Log::error("Error getting ref {$ref} for {$owner}/{$repo}: " . $e->getMessage());
+            return null;
+        }
+    }

@@ -1,0 +1,138 @@
+[
+    {
+        "group": "pagination",
+        "key": "limit_exceeded",
+        "text": {
+            "en": "Pagination limit of :limit is exceeded.",
+            "fr": "La limite de pagination de :limit est dépassée.",
+            "pt": "O limite de paginação de :limit foi excedido."
+        }
+    },
+    {
+        "group": "query",
+        "key": "no_results",
+        "text": {
+            "en": "No query results",
+            "fr": "Aucun résultat de requête",
+            "pt": "Nenhum resultado da consulta"
+        }
+    },
+    {
+        "group": "settings",
+        "key": "update_success",
+        "text": {
+            "en": "Settings updated successfully",
+            "fr": "Paramètres mis à jour avec succès",
+            "pt": "Configurações atualizadas com sucesso"
+        }
+    },
+    {
+        "group": "settings",
+        "key": "retrieve_success",
+        "text": {
+            "en": "Settings retrieved successfully",
+            "fr": "Paramètres récupérés avec succès",
+            "pt": "Configurações recuperadas com sucesso"
+        }
+    },
+    {
+        "group": "dateformat",
+        "key": "datekey",
+        "text": {
+            "en": "m/d/Y",
+            "fr": "d/m/Y",
+            "pt": "d/m/Y"
+        }
+    },
+    {
+        "group": "dateformatTime",
+        "key": "datekey",
+        "text": {
+            "en": "m/d/Y H:i",
+            "fr": "d/m/Y H:i",
+            "pt": "d/m/Y H:i"
+        }
+    },
+    {
+        "group": "language",
+        "key": "message",
+        "text": {
+            "en": "Preferred language updated successfully",
+            "fr": "Langue préférée mise à jour avec succès",
+            "pt": "Idioma preferencial atualizado com sucesso"
+        }
+    },
+    {
+    "group": "language",
+    "key": "already_associated",
+    "text": {
+        "en": "Preferred language is already associated successfully",
+        "fr": "La langue préférée est déjà associée avec succès",
+        "pt": "O idioma preferencial já está associado com sucesso"
+    }
+    },
+
+    {
+        "group": "language",
+        "key": "English",
+        "text": {
+            "en": "English",
+            "fr": "Anglais",
+            "pt": "Inglês"
+        }
+    },
+    {
+        "group": "language",
+        "key": "Français",
+        "text": {
+            "en": "French",
+            "fr": "Français",
+            "pt": "Francês"
+        }
+    },
+    {
+        "group": "language",
+        "key": "Portuguese",
+        "text": {
+            "en": "Portuguese",
+            "fr": "Portugais",
+            "pt": "Português"
+        }
+    },
+    {
+        "group": "backup",
+        "key": "notify",
+        "text": {
+            "en": "Backup process has been dispatched. You will be notified upon completion.",
+            "fr": "Le processus de sauvegarde a été lancé. Vous serez notifié une fois terminé.",
+            "pt": "O processo de backup foi iniciado. Você será notificado quando for concluído."
+        }
+    },
+    {
+        "group": "backup",
+        "key": "status",
+        "text": {
+            "en": "Backup completed successfully!",
+            "fr": "Sauvegarde terminée avec succès !",
+            "pt": "Backup concluído com sucesso!"
+        }
+    },
+    {
+        "group": "global",
+        "key": "toutes_les_categories",
+        "text": {
+            "en": "All categories",
+            "fr": "Toutes les catégories",
+            "pt": "Todas as categorias"
+        }
+    },
+    {
+        "group": "global",
+        "key": "tous_les_menus",
+        "text": {
+            "en": "All menus",
+            "fr": "Tous les menus",
+            "pt": "Todos os menus"
+        }
+    }
+]

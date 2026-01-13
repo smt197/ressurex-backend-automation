@@ -1,0 +1,20 @@
+[
+    {
+        "group": "notifications",
+        "key": "list",
+        "text": {
+            "en": "notifications list.",
+            "fr": "Liste des notifications.",
+            "pt": "lista de notificações."
+        }
+    },
+    {
+        "group": "notifications",
+        "key": "show",
+        "text": {
+            "en": "new test notification!",
+            "fr": "nouvelle notification de test!",
+            "pt": "nova notificação de teste!"
+        }
+    }
+]

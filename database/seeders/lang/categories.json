@@ -1,0 +1,92 @@
+[
+    {
+        "group": "categories",
+        "key": "list",
+        "text": {
+            "en": "Categories list.",
+            "fr": "Liste des catégories.",
+            "pt": "Lista de categorias."
+        }
+    },
+    {
+        "group": "categories",
+        "key": "show",
+        "text": {
+            "en": "Category details.",
+            "fr": "Détails de la catégorie.",
+            "pt": "Detalhes da categoria."
+        }
+    },
+    {
+        "group": "categories",
+        "key": "created",
+        "text": {
+            "en": "Category created successfully.",
+            "fr": "Catégorie créée avec succès.",
+            "pt": "Categoria criada com sucesso."
+        }
+    },
+    {
+        "group": "categories",
+        "key": "updated",
+        "text": {
+            "en": "Category updated successfully.",
+            "fr": "Catégorie mise à jour avec succès.",
+            "pt": "Categoria atualizada com sucesso."
+        }
+    },
+    {
+        "group": "categories",
+        "key": "deleted",
+        "text": {
+            "en": "Category deleted successfully.",
+            "fr": "Catégorie supprimée avec succès.",
+            "pt": "Categoria excluída com sucesso."
+        }
+    },
+    {
+        "group": "categories",
+        "key": "dashboard",
+        "text": {
+            "en": "Dashboard",
+            "fr": "Tableau de bord",
+            "pt": "Painel"
+        }
+    },
+    {
+        "group": "categories",
+        "key": "administration",
+        "text": {
+            "en": "Administration",
+            "fr": "Administration",
+            "pt": "Administração"
+        }
+    },
+    {
+        "group": "categories",
+        "key": "autorisation",
+        "text": {
+            "en": "Authorization",
+            "fr": "Autorisation",
+            "pt": "Autorização"
+        }
+    },
+    {
+        "group": "categories",
+        "key": "communication",
+        "text": {
+            "en": "Communication",
+            "fr": "Communication",
+            "pt": "Comunicação"
+        }
+    },
+    {
+        "group": "categories",
+        "key": "gestion",
+        "text": {
+            "en": "Management",
+            "fr": "Gestion",
+            "pt": "Gestão"
+        }
+    }
+]

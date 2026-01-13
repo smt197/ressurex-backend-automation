@@ -1,0 +1,20 @@
+[
+    {
+        "group": "translation",
+        "key": "job_completed",
+        "text": {
+            "en": "Translation completed successfully for module ':module' (languages: :languages)",
+            "fr": "Traduction terminée avec succès pour le module ':module' (langues: :languages)",
+            "pt": "Tradução concluída com sucesso para o módulo ':module' (idiomas: :languages)"
+        }
+    },
+    {
+        "group": "translation",
+        "key": "job_failed",
+        "text": {
+            "en": "Translation failed for module ':module'. Error: :error",
+            "fr": "La traduction a échoué pour le module ':module'. Erreur: :error",
+            "pt": "A tradução falhou para o módulo ':module'. Erro: :error"
+        }
+    }
+]

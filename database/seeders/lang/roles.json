@@ -1,0 +1,49 @@
+[
+    {
+        "group": "roles",
+        "key": "list",
+        "text": {
+            "en": "Roles list.",
+            "fr": "Liste des roles.",
+            "pt": "Lista de papel."
+        }
+    },
+    {
+        "group": "roles",
+        "key": "system",
+
+        "text": {
+            "en": "Super Administrator",
+            "fr": "Super Administrateur",
+            "pt": "Super Administrador"
+        }
+    },
+    {
+        "group": "roles",
+        "key": "admin",
+
+        "text": {
+            "en": "Administrator",
+            "fr": "Administrateur",
+            "pt": "Administrador"
+        }
+    },
+    {
+        "group": "roles",
+        "key": "manager",
+        "text": {
+            "en": "Manager",
+            "fr": "Gestionnaire",
+            "pt": "Gerente"
+        }
+    },
+    {
+        "group": "roles",
+        "key": "user",
+        "text": {
+            "en": "User",
+            "fr": "Utilisateur",
+            "pt": "Usuário"
+        }
+    }
+]

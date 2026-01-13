@@ -1,0 +1,30 @@
+[
+    {
+        "group": "app_settings",
+        "key": "site_description",
+        "text": {
+            "en": "Dive into an intuitive, seamless, and deeply intelligent user experience. Every interaction is designed to simplify your daily life and accelerate your work. Harnessing the power of AI, we transform complexity into instant solutions to boost your productivity. Our human-centered interface offers a clear, harmonious, and pleasant environment where every feature is at your fingertips.",
+            "fr": "Plongez dans une expérience utilisateur intuitive, fluide et profondément intelligente. Chaque interaction est pensée pour simplifier votre quotidien et accélérer votre travail. Grâce à la puissance de l’IA, nous transformons la complexité en solutions immédiates, afin de booster votre productivité. Notre interface, conçue avant tout pour l’humain, vous offre un environnement clair, harmonieux et agréable où chaque fonctionnalité est à portée de main. ",
+            "pt": "Mergulhe em uma experiência de usuário intuitiva, fluida e profundamente inteligente. Cada interação é projetada para simplificar seu dia a dia e acelerar seu trabalho. Aproveitando o poder da IA, transformamos a complexidade em soluções instantâneas para impulsionar sua produtividade. Nossa interface centrada no humano oferece um ambiente claro, harmonioso e agradável, onde cada recurso está ao seu alcance."
+        }
+    },
+    {
+        "group": "app_settings",
+        "key": "site_name",
+        "text": {
+            "en": "Site Name",
+            "fr": "Nom du Site",
+            "pt": "Nome do Site"
+        }
+    },
+    {
+        "group": "app_settings",
+        "key": "site_subtitle",
+        "text": {
+            "en": "Your trusted partner for innovative solutions",
+            "fr": "Votre partenaire de confiance pour des solutions innovantes",
+            "pt": "Seu parceiro de confiança para soluções inovadoras"
+        }
+    }
+
+]

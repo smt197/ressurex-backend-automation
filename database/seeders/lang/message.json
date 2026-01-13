@@ -1,0 +1,11 @@
+[
+    {
+        "group": "message",
+        "key": "show",
+        "text": {
+            "en": "New message for",
+            "fr": "Nouveau message de",
+            "pt": "Nova mensagem de"
+        }
+    }
+]

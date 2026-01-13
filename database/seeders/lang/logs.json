@@ -1,0 +1,11 @@
+[
+    {
+        "group": "logs",
+        "key": "list",
+        "text": {
+            "en": "Logs list.",
+            "fr": "Liste des Logs.",
+            "pt": "Lista de logas."
+        }
+    }
+]

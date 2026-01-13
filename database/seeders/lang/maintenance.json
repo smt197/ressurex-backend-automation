@@ -1,0 +1,38 @@
+[
+    {
+        "group": "maintenance",
+        "key": "active_maintenance",
+        "text": {
+            "en": "Maintenance mode is active. Please try again later.",
+            "fr": "Le mode maintenance est actif. Veuillez réessayer plus tard.",
+            "pt": "O modo de manutenção está ativo. Por favor, tente novamente mais tarde."
+        }
+    },
+    {
+        "group": "maintenance",
+        "key": "actif",
+        "text": {
+            "en": "Maintenance mode is active.",
+            "fr": "Mode maintenance activé",
+            "pt": "O modo de manutenção está ativo."
+        }
+    },
+    {
+        "group": "maintenance",
+        "key": "desactif",
+        "text": {
+            "en": "Maintenance mode is deactivated.",
+            "fr": "Mode maintenance desactivé",
+            "pt": "O modo de manutenção está desativado."
+        }
+    },
+    {
+        "group": "maintenance",
+        "key": "unauthorized_user",
+        "text": {
+            "en": "You do not have permission to access this resource.",
+            "fr": "Vous n'avez pas la permission d'accéder à cette ressource.",
+            "pt": "Você não tem permissão para acessar este recurso."
+        }
+    }
+]

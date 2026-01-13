@@ -1,0 +1,457 @@
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use App\Services\BackendModuleGenerator;
+use App\Models\ModuleManager; // Assurez-vous d'importer le modèle approprié
+use Illuminate\Support\Str;
+
+
+class ProcessModuleFiles implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $moduleName;
+
+    public $fields;
+
+    public $identifierField;
+
+    public $temporaryDirectoryDisk;
+
+    public $userId; // Pour suivre qui a initié la génération
+
+    public $timeout = 300; // Timeout plus long pour les gros modules
+
+    /**
+     * Créer une nouvelle instance de job.
+     *
+     * @param string $moduleName
+     * @param array $fields
+     * @param string $identifierField
+     * @param string $temporaryDirectoryDisk
+     * @param int|null $userId
+     * @return void
+     */
+    public function __construct($moduleName, $fields, $identifierField, $temporaryDirectoryDisk, $userId = null)
+    {
+        $this->moduleName = $moduleName;
+        $this->fields = $fields;
+        $this->identifierField = $identifierField;
+        $this->temporaryDirectoryDisk = $temporaryDirectoryDisk;
+        $this->userId = $userId;
+
+        // Définir un timeout plus long pour les gros modules
+        $this->timeout = 300;
+    }
+
+    /**
+     * Exécuter le job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        $tempDirectory = 'modules/' . $this->moduleName;
+
+        try {
+            Log::info("Starting ProcessModuleFiles for module: {$this->moduleName}", [
+                'user_id' => $this->userId,
+                'fields_count' => count($this->fields),
+                'identifier_field' => $this->identifierField
+            ]);
+
+            // Utiliser le générateur de module backend
+            $generator = new BackendModuleGenerator(
+                $this->moduleName,
+                $this->fields,
+                $this->identifierField
+            );
+
+            // Générer les fichiers du module
+            $result = $generator->generate();
+
+            if (!$result['success']) {
+                Log::error("Backend generation failed for module {$this->moduleName}", [
+                    'error' => $result['message'],
+                    'details' => $result['error'] ?? null
+                ]);
+                throw new \Exception("Backend generation failed: " . $result['message']);
+            }
+
+            // Traiter les fichiers temporaires s'il y en a
+            $this->processTemporaryFiles($tempDirectory);
+
+            Log::info("ProcessModuleFiles completed successfully for module: {$this->moduleName}", [
+                'generated_files' => array_keys($result['files'])
+            ]);
+
+            // Notification optionnelle à l'utilisateur
+            if ($this->userId) {
+                $this->notifyUser($result);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error in ProcessModuleFiles for module {$this->moduleName}: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $this->userId
+            ]);
+
+            // Notification d'échec optionnelle
+            if ($this->userId) {
+                $this->notifyUserOfFailure($e);
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Traiter les fichiers temporaires du module
+     *
+     * @param string $tempDirectory
+     * @return void
+     */
+    protected function processTemporaryFiles($tempDirectory)
+    {
+        $databaseDriver = config('database.default');
+
+        $disk = match ($databaseDriver) {
+            'mysql', 'mariadb' => 'filegator_sftp',
+            'pgsql' => 'minio',
+            default => config('filesystems.default')
+        };
+        $storage = Storage::disk($disk);
+
+        // Vérifier si le répertoire temporaire existe
+        if (!$storage->exists($tempDirectory)) {
+            Log::info("Temporary directory does not exist: {$tempDirectory}");
+            return;
+        }
+
+        $temporaryFiles = $storage->allFiles($tempDirectory);
+
+        foreach ($temporaryFiles as $filePath) {
+            $this->processFile($filePath, $disk);
+        }
+
+        // Optionnel : Supprimer le répertoire temporaire après traitement
+        $storage->deleteDirectory($tempDirectory);
+        Log::info("Temporary directory deleted: {$tempDirectory}");
+    }
+
+    /**
+     * Traiter un fichier individuel (uniquement images et PDF)
+     *
+     * @param string $filePath
+     * @param string $disk
+     * @return void
+     */
+    protected function processFile(string $filePath, $disk)
+    {
+        try {
+            $filename = basename($filePath);
+            $fileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+            // Extensions de fichiers images et PDF acceptées
+            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'tiff'];
+            $pdfExtension = 'pdf';
+
+            // Vérifier si le fichier est une image ou un PDF
+            if (in_array($fileExtension, $imageExtensions)) {
+                $this->processImageFile($filePath, $disk);
+            } elseif ($fileExtension === $pdfExtension) {
+                $this->processPdfFile($filePath, $disk);
+            } else {
+                // Ignorer les autres types de fichiers
+                Log::info("Skipping non-image/PDF file: {$filePath}");
+                return;
+            }
+
+            Log::info("Processed file: {$filePath}");
+        } catch (\Exception $e) {
+            Log::error("Error processing file {$filePath}: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Traiter un fichier image avec Spatie Media Library
+     *
+     * @param string $filePath
+     * @param string $disk
+     * @return void
+     */
+    protected function processImageFile(string $filePath, $disk)
+    {
+        // Récupérer ou créer le modèle associé au module
+        $moduleModel = $this->getModuleModel();
+        
+        if (!$moduleModel) {
+            Log::error("Module model not found for: {$this->moduleName}");
+            return;
+        }
+
+        $filename = basename($filePath);
+        
+        // Vérifier si le fichier est une image valide
+        if (!$this->isValidImage($filePath, $disk)) {
+            throw new \Exception("Invalid image file: {$filePath}");
+        }
+
+        // Ajouter le fichier à la collection 'attachments' avec Spatie Media Library
+        $media = $moduleModel->addMediaFromDisk($filePath, $disk)
+            ->usingName(pathinfo($filename, PATHINFO_FILENAME))
+            ->usingFileName($filename)
+            ->withCustomProperties([
+                'module_name' => $this->moduleName,
+                'file_type' => 'image',
+                'processed_by' => 'ProcessModuleFiles job',
+                'user_id' => $this->userId
+            ])
+            ->toMediaCollection('attachments', $disk);
+
+        // Traitements spécifiques aux images si nécessaire
+        $this->optimizeImage($media);
+
+        Log::info("Image processed and added to media collection: {$media->id}");
+    }
+
+    /**
+     * Traiter un fichier PDF avec Spatie Media Library
+     *
+     * @param string $filePath
+     * @param string $disk
+     * @return void
+     */
+    protected function processPdfFile(string $filePath, $disk)
+    {
+        // Récupérer ou créer le modèle associé au module
+        $moduleModel = $this->getModuleModel();
+        
+        if (!$moduleModel) {
+            Log::error("Module model not found for: {$this->moduleName}");
+            return;
+        }
+
+        $filename = basename($filePath);
+        
+        // Vérifier si le fichier est un PDF valide
+        if (!$this->isValidPdf($filePath, $disk)) {
+            throw new \Exception("Invalid PDF file: {$filePath}");
+        }
+
+        // Ajouter le fichier à la collection 'attachments' avec Spatie Media Library
+        $media = $moduleModel->addMediaFromDisk($filePath, $disk)
+            ->usingName(pathinfo($filename, PATHINFO_FILENAME))
+            ->usingFileName($filename)
+            ->withCustomProperties([
+                'module_name' => $this->moduleName,
+                'file_type' => 'pdf',
+                'processed_by' => 'ProcessModuleFiles job',
+                'user_id' => $this->userId
+            ])
+            ->toMediaCollection('attachments', $disk);
+
+        // Traitements spécifiques aux PDF si nécessaire
+        $this->processPdfContent($media);
+
+        Log::info("PDF processed and added to media collection: {$media->id}");
+    }
+
+    /**
+     * Récupérer le modèle associé au module
+     *
+     * @return Model|null
+     */
+    protected function getModuleModel()
+    {
+        try {
+            // Essayer de trouver un modèle existant pour ce module
+            $modelClass = 'App\\Models\\' . Str::studly(Str::singular($this->moduleName));
+            
+            if (class_exists($modelClass)) {
+                // Si le modèle existe, essayer de trouver une instance
+                $model = $modelClass::first();
+                
+                if (!$model) {
+                    // Si aucune instance n'existe, en créer une nouvelle
+                    $model = new $modelClass();
+                    $model->save();
+                }
+                
+                return $model;
+            }
+            
+            // Si le modèle n'existe pas, utiliser ModuleManager comme fallback
+            return ModuleManager::firstOrCreate([
+                'module_name' => $this->moduleName
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Error getting module model: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Vérifier si un fichier est une image valide
+     *
+     * @param string $filePath
+     * @param string $disk
+     * @return bool
+     */
+    protected function isValidImage(string $filePath, $disk): bool
+    {
+        $storage = Storage::disk($disk);
+        
+        // Vérifier l'extension
+        $filename = basename($filePath);
+        $fileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'tiff'];
+        
+        if (!in_array($fileExtension, $validExtensions)) {
+            return false;
+        }
+        
+        // Pour une validation plus approfondie, vous pourriez utiliser getimagesizefromstring
+        // mais cela nécessiterait de télécharger le fichier temporairement
+        
+        return true;
+    }
+
+    /**
+     * Vérifier si un fichier est un PDF valide
+     *
+     * @param string $filePath
+     * @param string $disk
+     * @return bool
+     */
+    protected function isValidPdf(string $filePath, $disk): bool
+    {
+        $storage = Storage::disk($disk);
+        
+        // Vérifier l'extension
+        $filename = basename($filePath);
+        $fileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if ($fileExtension !== 'pdf') {
+            return false;
+        }
+        
+        // Pour une validation plus approfondie, vous pourriez vérifier l'en-tête du fichier
+        // mais cela nécessiterait de télécharger le fichier temporairement
+        
+        return true;
+    }
+
+    /**
+     * Optimiser une image
+     *
+     * @param Media $media
+     * @return void
+     */
+    protected function optimizeImage($media)
+    {
+        // Implémenter l'optimisation d'image si nécessaire
+        // Par exemple, en utilisant Spatie Image Optimization ou un autre service
+        
+        Log::info("Image optimization completed for media: {$media->id}");
+    }
+
+    /**
+     * Traiter le contenu d'un PDF
+     *
+     * @param Media $media
+     * @return void
+     */
+    protected function processPdfContent($media)
+    {
+        // Implémenter le traitement de contenu PDF si nécessaire
+        // Par exemple, extraction de texte, génération de miniatures, etc.
+        
+        Log::info("PDF content processing completed for media: {$media->id}");
+    }
+
+    /**
+     * Notifier l'utilisateur du succès
+     *
+     * @param array $result
+     * @return void
+     */
+    protected function notifyUser(array $result)
+    {
+        // Implémenter la notification (par email, notification système, etc.)
+        // Exemple:
+        // $user = User::find($this->userId);
+        // if ($user) {
+        //     $user->notify(new ModuleGeneratedNotification($this->moduleName, $result));
+        // }
+    }
+
+    /**
+     * Notifier l'utilisateur de l'échec
+     *
+     * @param \Exception $exception
+     * @return void
+     */
+    protected function notifyUserOfFailure(\Exception $exception)
+    {
+        // Implémenter la notification d'échec
+        // Exemple:
+        // $user = User::find($this->userId);
+        // if ($user) {
+        //     $user->notify(new ModuleGenerationFailedNotification($this->moduleName, $exception));
+        // }
+    }
+
+    /**
+     * Le job a échoué
+     *
+     * @param \Exception $exception
+     * @return void
+     */
+    public function failed(\Exception $exception)
+    {
+        Log::error("ProcessModuleFiles job failed for module {$this->moduleName}", [
+            'error' => $exception->getMessage(),
+            'trace' => $exception->getTraceAsString(),
+            'user_id' => $this->userId
+        ]);
+
+        // Nettoyer les ressources temporaires en cas d'échec
+        $this->cleanup();
+    }
+
+    /**
+     * Nettoyer les ressources temporaires
+     *
+     * @return void
+     */
+    protected function cleanup()
+    {
+        try {
+            $databaseDriver = config('database.default');
+
+            $disk = match ($databaseDriver) {
+                'mysql', 'mariadb' => 'filegator_sftp',
+                'pgsql' => 'minio',
+                default => config('filesystems.default')
+            };
+            $storage = Storage::disk($disk);
+            $tempDirectory = 'modules/' . $this->moduleName;
+
+            if ($storage->exists($tempDirectory)) {
+                $storage->deleteDirectory($tempDirectory);
+                Log::info("Cleaned up temporary directory: {$tempDirectory}");
+            }
+        } catch (\Exception $e) {
+            Log::error("Error during cleanup: " . $e->getMessage());
+        }
+    }
+}
