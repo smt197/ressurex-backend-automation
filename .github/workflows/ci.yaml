@@ -58,7 +58,7 @@ jobs:
       - name: Notify Dokploy via Webhook
         if: success()
         env:
-          WEBHOOK_URL: ${{ secrets.DOKPLOY_WEBHOOK_URL_FRONTEND }}
+          WEBHOOK_URL: ${{ secrets.DOKPLOY_WEBHOOK_URL }}
         run: |
           set +e  # Désactiver l'arrêt sur erreur
           echo "Calling webhook..."
