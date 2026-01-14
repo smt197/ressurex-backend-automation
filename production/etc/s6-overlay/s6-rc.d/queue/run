@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Run Laravel queue worker (already running as www-data from Dockerfile)
+cd /var/www/html
+exec php artisan queue:work redis --timeout=600 --sleep=3 --tries=3 --max-time=3600 --max-jobs=1000 --memory=512 --queue=default,high,low
