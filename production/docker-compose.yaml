@@ -1,7 +1,7 @@
 services:
   backend:
     container_name: humanics-backend
-    image: ghcr.io/thumanics/ressurex-backend-automation:latest
+    image: ghcr.io/smt197/ressurex-backend-automation:latest
     pull_policy: always
     restart: unless-stopped
     
