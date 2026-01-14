@@ -86,7 +86,25 @@ class Init extends Command
     {
         try {
             $this->info('📊 Running Migrations...');
-            $this->call('migrate', ['--force' => true]);
+
+            // Check if this is a fresh deployment by looking for essential columns
+            $needsFresh = false;
+            try {
+                $columns = DB::getSchemaBuilder()->getColumnListing('users');
+                if (! empty($columns) && ! in_array('first_name', $columns)) {
+                    $needsFresh = true;
+                    $this->warn('⚠️ Detected incompatible users table structure. Running fresh migration...');
+                }
+            } catch (\Exception $e) {
+                // Table doesn't exist, normal migrate will work
+            }
+
+            if ($needsFresh) {
+                $this->call('migrate:fresh', ['--force' => true]);
+            } else {
+                $this->call('migrate', ['--force' => true]);
+            }
+
             $this->info('✅ Migrations completed.');
         } catch (\Exception $e) {
             $this->error('❌ Migration error: ' . $e->getMessage());
