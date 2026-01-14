@@ -17,10 +17,8 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles if they don't exist
-        Role::firstOrCreate(['name' => 'user']);
-        Role::firstOrCreate(['name' => 'manager']);
-        Role::firstOrCreate(['name' => 'admin']);
+
+        $defaultPassword = 'P@sser12';
 
         $availableLanguages = [
             ['code' => 'en', 'name' => 'English', 'flag' => 'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg'],
@@ -28,7 +26,8 @@ class UserSeeder extends Seeder
             ['code' => 'pt', 'name' => 'Portuguese', 'flag' => 'https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/PT.svg'],
         ];
 
-        // Create regular users
+         // Create regular users only in non-production (requires Faker)
+        if (app()->environment('local', 'testing', 'development')) {
         User::factory(150)->create()->each(function ($user) use ($availableLanguages) {
             $user->assignRole('user');
             $user->givePermissionTo(['browse_admin_read']);
@@ -57,21 +56,24 @@ class UserSeeder extends Seeder
             }
             // $user->languages()->sync($languagesToAttach);
         });
+        }
 
         // Create tekie user
         $tekieCountry = Country::where('country_code', 'FR')->first();
-        $tekieUser = User::factory()->create([
+        $tekieUser = User::updateOrCreate(
+            ['email' => 'tekie@tekie.com'],
+            [
             'first_name' => 'Tekie',
             'last_name' => 'Developer',
             'photo' => '',
-            'email' => 'tekie@tekie.com',
             'phone' => '+33634578291',
             'birthday' => '1990-01-01',
-            'password' => Hash::make('P@sser12'),
+            'password' => Hash::make($defaultPassword),
             'country_id' => $tekieCountry?->id,
             'email_verified_at' => now(),
             'is_blocked' => false,
-        ]);
+        ]
+        );
         $tekieUser->assignRole(['user', 'manager']);
         $tekieUser->givePermissionTo(['browse_admin_create', 'browse_admin_read']);
 
@@ -91,14 +93,15 @@ class UserSeeder extends Seeder
 
         // Create admin user
         $adminCountry = Country::where('country_code', 'US')->first();
-        $adminUser = User::factory()->create([
+        $adminUser = User::updateOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
             'first_name' => 'Admin',
             'last_name' => 'Administrator',
             'photo' => '',
-            'email' => 'admin@admin.com',
             'phone' => $adminCountry?->dial_code.rand(100000000, 999999999),
             'birthday' => '1985-05-15',
-            'password' => Hash::make('P@sser12'),
+            'password' => Hash::make($defaultPassword),
             'country_id' => $adminCountry?->id,
             'email_verified_at' => now(),
             'is_blocked' => false,
@@ -122,14 +125,15 @@ class UserSeeder extends Seeder
 
         // Create manager user
         $managerCountry = Country::where('country_code', 'US')->first();
-        $managerUser = User::factory()->create([
+        $managerUser = User::updateOrCreate(
+            ['email' => 'manager@manager.com'],
+            [
             'first_name' => 'Manager',
             'last_name' => 'Manager',
             'photo' => '',
-            'email' => 'manager@manager.com',
             'phone' => $managerCountry?->dial_code.rand(100000000, 999999999),
             'birthday' => '1985-05-15',
-            'password' => Hash::make('P@sser12'),
+            'password' => Hash::make($defaultPassword),
             'country_id' => $managerCountry?->id,
             'email_verified_at' => now(),
             'is_blocked' => false,
