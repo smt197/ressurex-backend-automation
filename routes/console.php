@@ -14,5 +14,5 @@ Artisan::command('inspire', function () {
 // Schedule::command('app:create-user')->everyMinute();
 // Schedule::job(new ProcessSendEmailToAllUsers)->everyMinute();
 // Schedule::command('app:create-user')->{config('scheduling.create_user', 'everyMinute')}();
-Schedule::job(new ProcessSendEmailToAllUsers)->{config('scheduling.send_email_to_all_users', 'everyMinute')}();
+// Schedule::job(new ProcessSendEmailToAllUsers)->{config('scheduling.send_email_to_all_users', 'everyMinute')}();
 Schedule::command('telescope:prune --hours=48')->daily();
