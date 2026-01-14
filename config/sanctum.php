@@ -19,6 +19,7 @@ return [
         '%s%s',
         'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
         'app.resurex.org',
+        'app.192.168.1.10.sslip.io',
         'localhost:4200',
         'localhost,127.0.0.1:3000',
         Sanctum::currentApplicationUrlWithPort()
