@@ -25,10 +25,10 @@
         "spatie/laravel-sluggable": "^3.7",
         "spatie/laravel-translation-loader": "^2.8",
         "spatie/temporary-directory": "^2.3",
-        "tailflow/laravel-orion": "^2.23"
+        "tailflow/laravel-orion": "^2.23",
+        "fakerphp/faker": "^1.23"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
         "laravel/boost": "^1.0",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.2.2",
