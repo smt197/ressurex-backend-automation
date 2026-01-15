@@ -46,4 +46,10 @@ return [
         'token' => env('GITHUB_TOKEN'),
     ],
 
+    'dokploy' => [
+        'webhook_secret' => env('DOKPLOY_WEBHOOK_SECRET'),
+        'api_url' => env('DOKPLOY_API_URL'),
+        'api_token' => env('DOKPLOY_API_TOKEN'),
+    ],
+
 ];

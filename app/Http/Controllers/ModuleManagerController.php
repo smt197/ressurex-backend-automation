@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DeploymentStatusUpdated;
 use App\Http\Requests\ModuleManagerRequest;
 use App\Http\Resources\Collections\ModuleManagerCollection;
 use App\Http\Resources\ModuleManagerResource;
+use App\Models\Deployment;
 use App\Models\ModuleManager;
 use App\Services\BackendModuleGenerator;
 use App\Services\OllamaTranslationService;
@@ -172,7 +174,13 @@ class ModuleManagerController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Module generated successfully!' . ($gitResult ? ' Git branch created and pushed.' : ''),
-                'data' => new ModuleManagerResource($moduleManager),
+                'data' => [
+                    'module' => new ModuleManagerResource($moduleManager),
+                    'module_slug' => $moduleManager->slug,
+                    'branch_name' => $gitResult['branch'] ?? null,
+                    'deployment_triggered' => $gitResult['deployment_triggered'] ?? false,
+                    'deployment_id' => $gitResult['deployment_id'] ?? null,
+                ],
                 'backend' => $backendResult,
                 'git' => $gitResult,
             ]);
@@ -1124,6 +1132,31 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
                     'github_branch' => $branchName,
                     'github_commit_sha' => $result['commit_sha'] ?? null,
                     'github_pushed_at' => now(),
+                ]);
+
+                // Create deployment record to track the deployment status
+                $deployment = Deployment::create([
+                    'user_id' => auth()->id(),
+                    'module_manager_id' => $moduleManager->id,
+                    'module_slug' => $moduleManager->slug,
+                    'branch_name' => $branchName,
+                    'status' => Deployment::STATUS_PENDING,
+                    'message' => 'Git push successful, waiting for Dokploy deployment...',
+                    'started_at' => now(),
+                ]);
+
+                // Broadcast initial deployment status to frontend via WebSocket
+                event(DeploymentStatusUpdated::fromDeployment($deployment));
+
+                // Add deployment info to result
+                $result['deployment_triggered'] = true;
+                $result['deployment_id'] = $deployment->id;
+
+                \Log::info('Deployment tracking created', [
+                    'deployment_id' => $deployment->id,
+                    'module_slug' => $moduleManager->slug,
+                    'branch' => $branchName,
+                    'user_id' => auth()->id()
                 ]);
             }
 

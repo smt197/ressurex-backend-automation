@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
-
+use App\Http\Controllers\DokployWebhookController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\AppSettingsController;
 use App\Http\Controllers\Auth\AuthenticateController;
@@ -35,6 +35,10 @@ use Orion\Facades\Orion;
 // Routes pour l'admin (non soumises au mode maintenance)
 Route::post('admin/login', [AuthenticateController::class, 'login'])->middleware('isadmin:admin');
 Route::get('maintenance/status', [MaintenanceController::class, 'status']);
+
+// Dokploy Webhook - No auth required (uses signature validation)
+Route::post('/webhooks/dokploy/deployment', [DokployWebhookController::class, 'handleDeploymentStatus'])
+    ->name('webhooks.dokploy.deployment');
 
 Route::group(['middleware' => ['language', 'user.is.blocked', 'maintenance']], function () {
     Route::post('forgot-password', [ForgotPasswordController::class, 'index']);
@@ -82,6 +86,10 @@ Route::group(['middleware' => ['user.is.blocked', 'auth:sanctum', 'verified', 'l
     Route::patch('/admin/modules/{slug}/toggle', [ModuleManagerController::class, 'toggleModule']);
     Route::post('/admin/modules/{slug}/regenerate', [ModuleManagerController::class, 'regenerateModule']);
     Route::get('/admin/modules/{slug}/files', [ModuleManagerController::class, 'getModuleFiles']);
+
+    // Deployment status routes (for polling fallback if WebSocket unavailable)
+    Route::get('/admin/deployments/active', [DokployWebhookController::class, 'getActiveDeployments']);
+    Route::get('/admin/deployments/{moduleSlug}/status', [DokployWebhookController::class, 'getDeploymentStatus']);
 
     // GitHub Repository routes
     // IMPORTANT: Route sans paramètre AVANT la resource pour éviter les conflits

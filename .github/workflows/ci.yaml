@@ -2,23 +2,51 @@ name: Build and Deploy Docker Image
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+      - "module/*"    # Branches de modules générés automatiquement
 
 permissions:
   contents: read
   packages: write
   actions: read
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      branch_name: ${{ steps.branch-info.outputs.branch_name }}
+      is_module_branch: ${{ steps.branch-info.outputs.is_module_branch }}
+      module_name: ${{ steps.branch-info.outputs.module_name }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
+      - name: Extract branch info
+        id: branch-info
+        run: |
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+
+          # Check if this is a module branch
+          if [[ "$BRANCH_NAME" == module/* ]]; then
+            echo "is_module_branch=true" >> $GITHUB_OUTPUT
+            MODULE_NAME="${BRANCH_NAME#module/}"
+            echo "module_name=${MODULE_NAME}" >> $GITHUB_OUTPUT
+            echo "📦 Module branch detected: ${MODULE_NAME}"
+          else
+            echo "is_module_branch=false" >> $GITHUB_OUTPUT
+            echo "module_name=" >> $GITHUB_OUTPUT
+            echo "🚀 Main branch deployment"
+          fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -36,7 +64,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=latest
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=sha,format=long
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -59,11 +87,23 @@ jobs:
         if: success()
         env:
           WEBHOOK_URL: ${{ secrets.DOKPLOY_WEBHOOK_URL }}
+          WEBHOOK_URL_MODULE: ${{ secrets.DOKPLOY_WEBHOOK_URL_MODULE }}
         run: |
-          set +e  # Désactiver l'arrêt sur erreur
-          echo "Calling webhook..."
+          set +e
+          BRANCH_NAME="${{ steps.branch-info.outputs.branch_name }}"
+          IS_MODULE="${{ steps.branch-info.outputs.is_module_branch }}"
 
-          response=$(curl -X POST "${WEBHOOK_URL}" \
+          # Use module webhook if available for module branches, otherwise use default
+          if [ "$IS_MODULE" = "true" ] && [ -n "$WEBHOOK_URL_MODULE" ]; then
+            FINAL_WEBHOOK_URL="$WEBHOOK_URL_MODULE"
+            echo "Using module webhook for branch: $BRANCH_NAME"
+          else
+            FINAL_WEBHOOK_URL="$WEBHOOK_URL"
+            echo "Using default webhook for branch: $BRANCH_NAME"
+          fi
+
+          echo "Calling Dokploy webhook..."
+          response=$(curl -X POST "${FINAL_WEBHOOK_URL}" \
             -w "\nHTTP_CODE:%{http_code}" \
             -s \
             --max-time 30)
@@ -77,10 +117,87 @@ jobs:
           echo "HTTP Code: $http_code"
 
           if [ "$http_code" = "200" ] || [ "$http_code" = "201" ] || [ "$http_code" = "204" ]; then
-            echo "✅ Webhook successful with code: $http_code"
+            echo "✅ Dokploy webhook successful with code: $http_code"
           else
-            echo "⚠️ Webhook failed with code: $http_code (curl exit: $curl_exit_code)"
+            echo "⚠️ Dokploy webhook failed with code: $http_code (curl exit: $curl_exit_code)"
             echo "Note: This will not fail the deployment as the image was successfully pushed"
           fi
         timeout-minutes: 2
 
+      - name: Notify Backend - Deployment Started
+        if: success()
+        env:
+          BACKEND_WEBHOOK_URL: ${{ secrets.BACKEND_DEPLOYMENT_WEBHOOK_URL }}
+          WEBHOOK_SECRET: ${{ secrets.DOKPLOY_WEBHOOK_SECRET }}
+        run: |
+          set +e
+          BRANCH_NAME="${{ steps.branch-info.outputs.branch_name }}"
+          IS_MODULE="${{ steps.branch-info.outputs.is_module_branch }}"
+          MODULE_NAME="${{ steps.branch-info.outputs.module_name }}"
+          COMMIT_SHA="${GITHUB_SHA}"
+
+          if [ "$IS_MODULE" = "true" ]; then
+            MESSAGE="Module '${MODULE_NAME}' deployment started"
+          else
+            MESSAGE="Backend deployment started via GitHub Actions"
+          fi
+
+          PAYLOAD="{\"deploymentId\": \"gh-${GITHUB_RUN_ID}\", \"applicationId\": \"backend\", \"status\": \"running\", \"branch\": \"${BRANCH_NAME}\", \"commit\": \"${COMMIT_SHA}\", \"message\": \"${MESSAGE}\", \"moduleName\": \"${MODULE_NAME}\", \"isModuleBranch\": ${IS_MODULE}, \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
+
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | cut -d' ' -f2)
+
+          echo "Notifying backend of deployment start..."
+          curl -X POST "${BACKEND_WEBHOOK_URL}" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Signature: sha256=${SIGNATURE}" \
+            -d "$PAYLOAD" \
+            --max-time 10 \
+            -s || echo "Backend notification failed (non-blocking)"
+        timeout-minutes: 1
+
+  notify-deployment-complete:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Notify Backend - Deployment Complete
+        env:
+          BACKEND_WEBHOOK_URL: ${{ secrets.BACKEND_DEPLOYMENT_WEBHOOK_URL }}
+          WEBHOOK_SECRET: ${{ secrets.DOKPLOY_WEBHOOK_SECRET }}
+        run: |
+          set +e
+          BRANCH_NAME="${{ needs.build-and-push.outputs.branch_name }}"
+          IS_MODULE="${{ needs.build-and-push.outputs.is_module_branch }}"
+          MODULE_NAME="${{ needs.build-and-push.outputs.module_name }}"
+          COMMIT_SHA="${GITHUB_SHA}"
+
+          # Determine status based on previous job
+          if [ "${{ needs.build-and-push.result }}" = "success" ]; then
+            STATUS="done"
+            if [ "$IS_MODULE" = "true" ]; then
+              MESSAGE="Module '${MODULE_NAME}' deployed successfully! 🎉"
+            else
+              MESSAGE="Backend deployment completed successfully"
+            fi
+          else
+            STATUS="error"
+            if [ "$IS_MODULE" = "true" ]; then
+              MESSAGE="Module '${MODULE_NAME}' deployment failed ❌"
+            else
+              MESSAGE="Backend deployment failed"
+            fi
+          fi
+
+          PAYLOAD="{\"deploymentId\": \"gh-${GITHUB_RUN_ID}\", \"applicationId\": \"backend\", \"status\": \"${STATUS}\", \"branch\": \"${BRANCH_NAME}\", \"commit\": \"${COMMIT_SHA}\", \"message\": \"${MESSAGE}\", \"moduleName\": \"${MODULE_NAME}\", \"isModuleBranch\": ${IS_MODULE}, \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
+
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | cut -d' ' -f2)
+
+          echo "Notifying backend of deployment completion..."
+          curl -X POST "${BACKEND_WEBHOOK_URL}" \
+            -H "Content-Type: application/json" \
+            -H "X-Webhook-Signature: sha256=${SIGNATURE}" \
+            -d "$PAYLOAD" \
+            --max-time 10 \
+            -s || echo "Backend notification failed (non-blocking)"
+        timeout-minutes: 1
