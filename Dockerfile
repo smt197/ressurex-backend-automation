@@ -37,7 +37,6 @@ RUN --mount=type=cache,target=/tmp/cache \
     --optimize-autoloader \
     --no-progress \
     --ignore-platform-reqs \
-    # Nettoyer le cache composer
     && rm -rf /var/www/.composer/cache
 # **IMPROVEMENT:** Switching to www-data for composer install is safer.
 # We will switch back to root in the next stage for system package installation.
