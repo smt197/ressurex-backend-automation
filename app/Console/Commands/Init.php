@@ -5,12 +5,13 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 
 class Init extends Command
 {
     protected $signature = 'app:init {--force : Force operation to run}';
 
-    protected $description = 'Initialize application (Cache, Logo, Migrations, Seeds, Storage)';
+    protected $description = 'Initialize application (Cache, Logo, Migrations, Seeds, Storage, Frontend)';
 
     public function handle()
     {
@@ -21,6 +22,9 @@ class Init extends Command
 
         // 1. Wait for Database
         $this->waitForDb();
+
+        // 2. Setup Frontend Repository
+        $this->handleFrontendSetup();
 
         // 3. Storage Link
         $this->handleStorageLink();
@@ -126,6 +130,83 @@ class Init extends Command
             }
         } else {
             $this->comment('✓ Seeders already ran.');
+        }
+    }
+
+    private function handleFrontendSetup(): void
+    {
+        $frontendPath = config('app.frontend_path');
+        $frontendRepo = env('FRONTEND_REPO', 'https://github.com/smt197/resurex-frontend-automation.git');
+        $githubToken = env('GITHUB_TOKEN', '');
+
+        $this->info('🔧 Setting up frontend repository...');
+
+        // Skip if we're in local development (path exists and is not in /var/www)
+        if (File::exists($frontendPath) && ! str_starts_with($frontendPath, '/var/www')) {
+            $this->comment('✓ Frontend path exists (local development).');
+
+            return;
+        }
+
+        // Check if already cloned
+        if (File::exists($frontendPath . '/.git')) {
+            $this->comment('✓ Frontend repository already exists.');
+            $this->pullLatestFrontend($frontendPath);
+
+            return;
+        }
+
+        // Create parent directory
+        $parentDir = dirname($frontendPath);
+        if (! File::exists($parentDir)) {
+            File::makeDirectory($parentDir, 0755, true);
+        }
+
+        // Clone repository
+        $this->info('📥 Cloning frontend repository...');
+
+        $repoUrl = $frontendRepo;
+        if ($githubToken) {
+            $repoUrl = str_replace('https://', "https://{$githubToken}@", $frontendRepo);
+        }
+
+        $result = Process::run("git clone --depth 1 {$repoUrl} {$frontendPath}");
+
+        if (! $result->successful()) {
+            $this->warn('⚠️ Failed to clone frontend repository: ' . $result->errorOutput());
+            $this->warn('   Module generation will not work without the frontend repository.');
+
+            return;
+        }
+
+        // Configure git
+        Process::path($frontendPath)->run('git config user.email "bot@resurex.com"');
+        Process::path($frontendPath)->run('git config user.name "Resurex Bot"');
+
+        // Install npm dependencies
+        $this->info('📦 Installing frontend npm dependencies...');
+        $npmResult = Process::path($frontendPath)->timeout(300)->run('npm ci --legacy-peer-deps --silent');
+
+        if ($npmResult->successful()) {
+            $this->info('✅ Frontend repository setup complete!');
+        } else {
+            $this->warn('⚠️ npm install had issues: ' . $npmResult->errorOutput());
+            // Try fallback
+            Process::path($frontendPath)->timeout(300)->run('npm install --legacy-peer-deps --silent');
+        }
+    }
+
+    private function pullLatestFrontend(string $frontendPath): void
+    {
+        $this->info('📥 Pulling latest frontend changes...');
+
+        Process::path($frontendPath)->run('git config --global --add safe.directory ' . $frontendPath);
+        $result = Process::path($frontendPath)->run('git pull origin main');
+
+        if ($result->successful()) {
+            $this->comment('✓ Frontend updated.');
+        } else {
+            $this->warn('⚠️ Could not pull latest changes: ' . $result->errorOutput());
         }
     }
 }

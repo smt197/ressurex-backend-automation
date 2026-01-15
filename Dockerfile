@@ -72,7 +72,7 @@ RUN install-php-extensions \
 RUN docker-php-serversideup-set-id www-data $USER_ID:$GROUP_ID && \
     docker-php-serversideup-set-file-permissions --owner $USER_ID:$GROUP_ID --service nginx
 
-# Install system dependencies
+# Install system dependencies including Node.js for module generation
 RUN --mount=type=cache,target=/var/cache/apk \
     apk upgrade && \
     apk add --no-cache \
@@ -82,7 +82,9 @@ RUN --mount=type=cache,target=/var/cache/apk \
     git-lfs \
     jq \
     lsof \
-    vim
+    vim \
+    nodejs \
+    npm
 
 # Configure shell aliases
 # **IMPROVEMENT:** Using >> /etc/profile.d/aliases.sh is cleaner for Alpine/Linux setups
