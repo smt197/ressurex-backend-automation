@@ -82,7 +82,10 @@ RUN --mount=type=cache,target=/var/cache/apk \
     git-lfs \
     jq \
     lsof \
-    vim
+    lsof \
+    vim \
+    nodejs \
+    npm
 
 # Configure shell aliases
 # **IMPROVEMENT:** Using >> /etc/profile.d/aliases.sh is cleaner for Alpine/Linux setups

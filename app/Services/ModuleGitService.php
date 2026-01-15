@@ -69,12 +69,18 @@ class ModuleGitService
                 }
 
                 // Save branch to database
-                GithubBranch::create([
-                    'name' => $branchName,
-                    'github_repository_id' => $repository->id,
-                    'protected' => false,
-                    'commit_sha' => $branchResult['object']['sha'] ?? $sourceBranchData->commit_sha,
-                ]);
+                // Save branch to database (update if exists)
+                GithubBranch::updateOrCreate(
+                    [
+                        'name' => $branchName,
+                        'github_repository_id' => $repository->id,
+                    ],
+                    [
+                        'protected' => false,
+                        'commit_sha' => $branchResult['object']['sha'] ?? $sourceBranchData->commit_sha,
+                        'updated_at' => now(),
+                    ]
+                );
 
                 Log::info("Created new branch: {$branchName}");
             }
