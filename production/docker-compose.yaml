@@ -148,3 +148,4 @@ networks:
 # Définition des volumes
 volumes:
   storage_data:
+  
