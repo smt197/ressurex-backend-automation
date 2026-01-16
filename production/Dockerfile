@@ -98,6 +98,10 @@ RUN echo "alias ll='ls -al'" > /etc/profile.d/aliases.sh && \
 COPY production/etc/php/conf.d/zzz-custom-php.ini /usr/local/etc/php/conf.d/zzz-custom-php.ini
 ENV PHP_OPCACHE_ENABLE=1
 
+# Configure PHP-FPM to retain environment variables (must be done as root)
+RUN echo "[www]" > /usr/local/etc/php-fpm.d/zz-force-env.conf && \
+    echo "clear_env = no" >> /usr/local/etc/php-fpm.d/zz-force-env.conf
+
 # Configure entrypoint
 COPY --chmod=755 production/entrypoint.d/ /etc/entrypoint.d
 
