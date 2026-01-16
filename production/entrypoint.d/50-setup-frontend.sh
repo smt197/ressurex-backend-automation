@@ -5,6 +5,14 @@ FRONTEND_PATH="${FRONTEND_PATH:-/var/www/resurex-frontend-automation}"
 FRONTEND_REPO="${FRONTEND_REPO:-https://github.com/smt197/resurex-frontend-automation.git}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 
+# Persist GITHUB_TOKEN to a file for PHP access (bypassing env var isolation)
+if [ -n "$GITHUB_TOKEN" ]; then
+    mkdir -p /var/www/html/storage/app
+    echo "$GITHUB_TOKEN" > /var/www/html/storage/app/github_token.txt
+    chmod 600 /var/www/html/storage/app/github_token.txt
+    echo "🔑 GITHUB_TOKEN persisted to storage for PHP access"
+fi
+
 echo "🔧 Setting up frontend repository for module generation..."
 
 # Skip if frontend path already exists and is valid

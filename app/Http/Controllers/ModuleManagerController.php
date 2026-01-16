@@ -1373,25 +1373,27 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
             // Push to main using explicit token to avoid credential issues
             // We get the repo URL from env or use the default one, but inject the token
             
-            // Try getting token from multiple sources
-            $token = config('services.github.token');
-            if (empty($token)) {
-                $token = env('GITHUB_TOKEN');
-            }
-            if (empty($token)) {
-                $token = getenv('GITHUB_TOKEN');
+            // Strategy: Read token from file (most reliable for Docker/PHP isolation)
+            $token = null;
+            $tokenPath = storage_path('app/github_token.txt');
+            
+            if (File::exists($tokenPath)) {
+                $token = trim(File::get($tokenPath));
             }
 
-            // Debug logging to understand why token is missing
+            // Fallbacks (just in case)
+            if (empty($token)) $token = config('services.github.token');
+            if (empty($token)) $token = env('GITHUB_TOKEN');
+            if (empty($token)) $token = getenv('GITHUB_TOKEN');
+
+            // Debug logging
             if (empty($token)) {
-                \Log::error('GITHUB_TOKEN missing from all sources', [
-                    'config' => config('services.github.token') ? 'set' : 'null',
-                    'env_config_cached' => app()->configurationIsCached(),
-                    'env_keys' => array_keys($_ENV), // Log available env keys to see if GITHUB_TOKEN exists
+                \Log::error('GITHUB_TOKEN missing from all sources (file, config, env)', [
+                    'token_file_exists' => File::exists($tokenPath),
+                    'token_file_path' => $tokenPath,
                 ]);
             } else {
-                // Log success (masked)
-                \Log::info('GITHUB_TOKEN found', ['source' => 'config/env', 'length' => strlen($token)]);
+                \Log::info('GITHUB_TOKEN found', ['source' => File::exists($tokenPath) ? 'file' : 'env', 'length' => strlen($token)]);
             }
 
             $repoUrl = env('FRONTEND_REPO', 'https://github.com/smt197/resurex-frontend-automation.git');
