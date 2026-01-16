@@ -3,14 +3,25 @@
 
 FRONTEND_PATH="${FRONTEND_PATH:-/var/www/resurex-frontend-automation}"
 FRONTEND_REPO="${FRONTEND_REPO:-https://github.com/smt197/resurex-frontend-automation.git}"
-GITHUB_TOKEN="${GITHUB_TOKEN:-}"
-
 # Persist GITHUB_TOKEN to a file for PHP access (bypassing env var isolation)
 if [ -n "$GITHUB_TOKEN" ]; then
     mkdir -p /var/www/html/storage/app
     echo "$GITHUB_TOKEN" > /var/www/html/storage/app/github_token.txt
+    chown www-data:www-data /var/www/html/storage/app/github_token.txt
     chmod 600 /var/www/html/storage/app/github_token.txt
     echo "🔑 GITHUB_TOKEN persisted to storage for PHP access"
+else
+    echo "⚠️ GITHUB_TOKEN not found in environment variables"
+fi
+
+# Configure PHP-FPM to NOT clear environment variables
+# Check where the pool config is located (usually /etc/php/*/fpm/pool.d/www.conf or /usr/local/etc/php-fpm.d/www.conf)
+# We will append to a generic override if possible, or try to find the standard path
+FPM_CONF_DIR=$(find /etc /usr/local/etc -type d -name "php-fpm.d" 2>/dev/null | head -n 1)
+if [ -n "$FPM_CONF_DIR" ]; then
+    echo "[www]
+clear_env = no" > "$FPM_CONF_DIR/99-force-env.conf"
+    echo "🔧 Configured PHP-FPM to retain environment variables in $FPM_CONF_DIR/99-force-env.conf"
 fi
 
 echo "🔧 Setting up frontend repository for module generation..."
