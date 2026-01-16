@@ -51,5 +51,4 @@ return [
         'api_url' => env('DOKPLOY_API_URL'),
         'api_token' => env('DOKPLOY_API_TOKEN'),
     ],
-
 ];
