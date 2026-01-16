@@ -15,7 +15,16 @@ fi
 # Debug environment (masked)
 if [ -z "$GITHUB_TOKEN" ]; then
     echo "⚠️ GITHUB_TOKEN not found in environment variables"
-    echo "Available env vars:"
+    echo "Current user: $(whoami)"
+    echo "UID: $(id -u), GID: $(id -g)"
+    echo "Checking /proc/1/environ for GITHUB_TOKEN..."
+    if grep -q "GITHUB_TOKEN" /proc/1/environ; then
+        echo "✅ GITHUB_TOKEN found in PID 1 environment (Docker passed it)"
+        echo "🚨 But it was lost in the current shell/process transition!"
+    else
+        echo "❌ GITHUB_TOKEN NOT found in PID 1 environment (Docker did NOT pass it)"
+    fi
+    echo "Available env vars in current shell:"
     printenv | grep -v "PASSWORD\|SECRET\|KEY\|TOKEN" | sort
 else
     echo "✅ GITHUB_TOKEN found in environment"
