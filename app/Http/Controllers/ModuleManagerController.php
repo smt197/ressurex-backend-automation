@@ -615,6 +615,9 @@ class ModuleManagerController extends Controller
         try {
             // Delete frontend files
             $this->executeDeletionScript($moduleManager);
+            
+            // Push changes (deletion) to GitHub
+            $this->pushFrontendChanges($moduleManager, 'Delete');
 
             // Delete backend files
             $this->deleteBackendModule($moduleManager);
@@ -651,10 +654,44 @@ class ModuleManagerController extends Controller
             'script_path' => $scriptPath,
         ]);
 
-        // Verify script exists
+        // Verify script exists, create if missing
         if (! File::exists($scriptPath)) {
-            \Log::error('Deletion script file does not exist', ['path' => $scriptPath]);
-            throw new \Exception("Deletion script file does not exist: {$scriptPath}");
+            \Log::warning('Deletion script file does not exist, creating it...', ['path' => $scriptPath]);
+            
+            $scriptContent = <<<JS
+const fs = require('fs');
+const path = require('path');
+
+const args = process.argv.slice(2);
+const tempFile = args[0];
+
+if (!tempFile || !fs.existsSync(tempFile)) {
+    console.error('Temporary file not found');
+    process.exit(1);
+}
+
+const data = JSON.parse(fs.readFileSync(tempFile, 'utf8'));
+const moduleName = data.moduleName;
+
+// Define paths
+const projectRoot = path.resolve(__dirname, '..');
+const modulePath = path.join(projectRoot, 'src/app/pages', moduleName);
+
+console.log(`Deleting module directory: \${modulePath}`);
+
+if (fs.existsSync(modulePath)) {
+    fs.rmSync(modulePath, { recursive: true, force: true });
+    console.log('Module directory deleted successfully');
+} else {
+    console.log('Module directory does not exist, skipping');
+}
+JS;
+            File::put($scriptPath, $scriptContent);
+            
+            // Verify creation
+             if (! File::exists($scriptPath)) {
+                throw new \Exception("Failed to create deletion script at: {$scriptPath}");
+            }
         }
 
         // Create a temporary JSON file with module data
@@ -1304,7 +1341,7 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
     /**
      * Push frontend changes to GitHub
      */
-    private function pushFrontendChanges(ModuleManager $moduleManager): void
+    private function pushFrontendChanges(ModuleManager $moduleManager, string $action = 'Generate'): void
     {
         $frontendPath = config('app.frontend_path');
 
@@ -1330,15 +1367,31 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
             }
 
             // Commit changes
-            $commitMessage = "feat: Generate frontend for module {$moduleManager->module_name}";
+            $commitMessage = "feat: {$action} frontend for module {$moduleManager->module_name}";
             Process::path($frontendPath)->run('git commit -m "' . $commitMessage . '"');
 
-            // Push to main
-            // Note: credentials are handled by the GITHUB_TOKEN configured in 50-setup-frontend.sh
-            $result = Process::path($frontendPath)->run('git push origin main');
+            // Push to main using explicit token to avoid credential issues
+            // We get the repo URL from env or use the default one, but inject the token
+            $token = config('services.github.token');
+            $repoUrl = env('FRONTEND_REPO', 'https://github.com/smt197/resurex-frontend-automation.git');
+            
+            if ($token) {
+                // Inject token into URL: https://TOKEN@github.com/...
+                $authenticatedUrl = str_replace('https://', "https://{$token}@", $repoUrl);
+                $result = Process::path($frontendPath)->run("git push \"{$authenticatedUrl}\" main");
+            } else {
+                // Fallback to origin if no token (unlikely to work if private)
+                \Log::warning('GITHUB_TOKEN not found in config, falling back to origin');
+                $result = Process::path($frontendPath)->run('git push origin main');
+            }
 
             if (!$result->successful()) {
-                throw new \Exception('Failed to push frontend changes: ' . $result->errorOutput());
+                // Mask token in error message
+                $errorOutput = $result->errorOutput();
+                if ($token) {
+                    $errorOutput = str_replace($token, '***TOKEN***', $errorOutput);
+                }
+                throw new \Exception('Failed to push frontend changes: ' . $errorOutput);
             }
 
             \Log::info('Frontend changes pushed successfully', [
