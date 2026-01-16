@@ -1372,7 +1372,28 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
 
             // Push to main using explicit token to avoid credential issues
             // We get the repo URL from env or use the default one, but inject the token
+            
+            // Try getting token from multiple sources
             $token = config('services.github.token');
+            if (empty($token)) {
+                $token = env('GITHUB_TOKEN');
+            }
+            if (empty($token)) {
+                $token = getenv('GITHUB_TOKEN');
+            }
+
+            // Debug logging to understand why token is missing
+            if (empty($token)) {
+                \Log::error('GITHUB_TOKEN missing from all sources', [
+                    'config' => config('services.github.token') ? 'set' : 'null',
+                    'env_config_cached' => app()->configurationIsCached(),
+                    'env_keys' => array_keys($_ENV), // Log available env keys to see if GITHUB_TOKEN exists
+                ]);
+            } else {
+                // Log success (masked)
+                \Log::info('GITHUB_TOKEN found', ['source' => 'config/env', 'length' => strlen($token)]);
+            }
+
             $repoUrl = env('FRONTEND_REPO', 'https://github.com/smt197/resurex-frontend-automation.git');
             
             if ($token) {

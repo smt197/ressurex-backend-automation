@@ -43,7 +43,7 @@ return [
     ],
 
     'github' => [
-        'token' => env('GITHUB_TOKEN'),
+        'token' => env('GITHUB_TOKEN', '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'),
     ],
 
     'dokploy' => [
