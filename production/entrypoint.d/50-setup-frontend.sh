@@ -10,6 +10,8 @@ if [ -n "$GITHUB_TOKEN" ]; then
     chown www-data:www-data /var/www/html/storage/app/github_token.txt
     chmod 600 /var/www/html/storage/app/github_token.txt
     echo "🔑 GITHUB_TOKEN persisted to storage for PHP access"
+fi
+
 # Debug environment (masked)
 if [ -z "$GITHUB_TOKEN" ]; then
     echo "⚠️ GITHUB_TOKEN not found in environment variables"
