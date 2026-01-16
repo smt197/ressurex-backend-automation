@@ -15,6 +15,12 @@ if [ -d "$FRONTEND_PATH/.git" ]; then
     # Configure git for safe directory
     git config --global --add safe.directory "$FRONTEND_PATH"
 
+    # Always update remote URL with token if provided (to ensure push access)
+    if [ -n "$GITHUB_TOKEN" ]; then
+        REPO_URL=$(echo "$FRONTEND_REPO" | sed "s|https://|https://${GITHUB_TOKEN}@|")
+        git remote set-url origin "$REPO_URL"
+    fi
+
     # Pull latest changes
     echo "📥 Pulling latest changes..."
     git pull origin main 2>/dev/null || echo "⚠️ Could not pull latest changes"

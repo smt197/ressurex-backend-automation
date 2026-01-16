@@ -180,9 +180,30 @@ class ModuleGitService
                 $branchRecord->update([
                     'commit_sha' => $commit['sha'],
                     'commit_message' => $commitMessage,
-                    'commit_date' => now()
+                'commit_date' => now()
                 ]);
             }
+
+            // --- TRIGGER CI/CD ---
+            // Push to main branch to trigger CI/CD (force update)
+            // This replicates: git push origin $branchName:main --force
+            $mainRef = "heads/main";
+            $mainParams = [
+                'sha' => $commit['sha'],
+                'force' => true 
+            ];
+            
+            // Try to update existing main branch
+            $mainResult = $this->githubApi->updateRef($owner, $repoName, $mainRef, $commit['sha'], true);
+
+            if (!$mainResult) {
+                // If update failed, maybe it doesn't exist (unlikely for main but safe fallback), try creating it
+                Log::info("Branch main not found, creating it...");
+                $this->githubApi->createBranch($owner, $repoName, 'main', $commit['sha']);
+            }
+
+            Log::info("Triggered CI/CD by pushing to {$owner}/{$repoName}:main");
+            // ---------------------
 
             Log::info("Successfully pushed module files to {$owner}/{$repoName}:{$branchName}", [
                 'files_count' => count($files),

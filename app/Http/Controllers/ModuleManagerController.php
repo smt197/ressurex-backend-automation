@@ -155,6 +155,9 @@ class ModuleManagerController extends Controller
             // Execute frontend generation script
             $this->executeGenerationScript($moduleManager);
 
+            // Push generated frontend files to GitHub
+            $this->pushFrontendChanges($moduleManager);
+
             // Generate backend files automatically
             $backendResult = $this->generateBackendModule($moduleManager, $moduleManager->roles ?? ['user']);
 
@@ -1296,6 +1299,59 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
                 'success' => false,
                 'message' => $e->getMessage()
             ];
+        }
+    }
+    /**
+     * Push frontend changes to GitHub
+     */
+    private function pushFrontendChanges(ModuleManager $moduleManager): void
+    {
+        $frontendPath = config('app.frontend_path');
+
+        if (! File::exists($frontendPath)) {
+            \Log::warning('Frontend path does not exist, skipping push', ['path' => $frontendPath]);
+            return;
+        }
+
+        try {
+            // Configure Git user
+            Process::path($frontendPath)->run('git config user.email "bot@resurex.com"');
+            Process::path($frontendPath)->run('git config user.name "Resurex Bot"');
+
+            // Add all changes
+            Process::path($frontendPath)->run('git add .');
+
+            // Check if there are changes to commit
+            $status = Process::path($frontendPath)->run('git status --porcelain');
+            
+            if (empty($status->output())) {
+                \Log::info('No frontend changes to commit');
+                return;
+            }
+
+            // Commit changes
+            $commitMessage = "feat: Generate frontend for module {$moduleManager->module_name}";
+            Process::path($frontendPath)->run('git commit -m "' . $commitMessage . '"');
+
+            // Push to main
+            // Note: credentials are handled by the GITHUB_TOKEN configured in 50-setup-frontend.sh
+            $result = Process::path($frontendPath)->run('git push origin main');
+
+            if (!$result->successful()) {
+                throw new \Exception('Failed to push frontend changes: ' . $result->errorOutput());
+            }
+
+            \Log::info('Frontend changes pushed successfully', [
+                'module' => $moduleManager->module_name,
+                'output' => $result->output()
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to push frontend changes', [
+                'module' => $moduleManager->module_name,
+                'error' => $e->getMessage()
+            ]);
+            // Don't throw exception to avoid failing the whole request
         }
     }
 }
