@@ -4,7 +4,9 @@
       "Bash(/c/laragon/bin/php/php-8.3.17-Win32-vs16-x64/php.exe artisan make:policy MenuPolicy --model=Menu)",
       "Bash(/c/laragon/bin/php/php-8.3.17-Win32-vs16-x64/php.exe artisan make:policy LanguagePolicy --model=Language)",
       "Bash(/c/laragon/bin/php/php-8.3.17-Win32-vs16-x64/php.exe:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
