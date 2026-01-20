@@ -1388,9 +1388,16 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
 
             // Debug logging
             if (empty($token)) {
+                $envVars = collect(getenv())->keys()->filter(function($key) {
+                    return !str_contains($key, 'KEY') && !str_contains($key, 'SECRET') && !str_contains($key, 'PASSWORD');
+                })->values()->all();
+                
                 \Log::error('GITHUB_TOKEN missing from all sources (file, config, env)', [
                     'token_file_exists' => File::exists($tokenPath),
                     'token_file_path' => $tokenPath,
+                    'current_user' => get_current_user(),
+                    'env_vars_available' => $envVars,
+                    'app_env' => config('app.env'),
                 ]);
             } else {
                 \Log::info('GITHUB_TOKEN found', ['source' => File::exists($tokenPath) ? 'file' : 'env', 'length' => strlen($token)]);
