@@ -1373,11 +1373,25 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
             // Push to main using explicit token to avoid credential issues
             // We get the repo URL from env or use the default one, but inject the token
             
-            // Strategy: Read token from file (most reliable for Docker/PHP isolation)
+            // Strategy: Check Database FIRST (most reliable user override)
             $token = null;
+            try {
+                $settings = \App\Models\GithubSettingsModel::where('group', 'github')
+                    ->where('name', 'github_token')
+                    ->first();
+                
+                if ($settings && $settings->github_token) {
+                    $token = $settings->github_token;
+                    \Log::info('GITHUB_TOKEN found in database settings');
+                }
+            } catch (\Exception $e) {
+                \Log::warning('Failed to retrieve GITHUB_TOKEN from database: ' . $e->getMessage());
+            }
+
+            // Strategy: Read token from file (Docker/PHP isolation fallback)
             $tokenPath = storage_path('app/github_token.txt');
             
-            if (File::exists($tokenPath)) {
+            if (empty($token) && File::exists($tokenPath)) {
                 $token = trim(File::get($tokenPath));
             }
 
@@ -1392,7 +1406,7 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
                     return !str_contains($key, 'KEY') && !str_contains($key, 'SECRET') && !str_contains($key, 'PASSWORD');
                 })->values()->all();
                 
-                \Log::error('GITHUB_TOKEN missing from all sources (file, config, env)', [
+                \Log::error('GITHUB_TOKEN missing from all sources (DB, file, config, env)', [
                     'token_file_exists' => File::exists($tokenPath),
                     'token_file_path' => $tokenPath,
                     'current_user' => get_current_user(),
@@ -1400,7 +1414,10 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
                     'app_env' => config('app.env'),
                 ]);
             } else {
-                \Log::info('GITHUB_TOKEN found', ['source' => File::exists($tokenPath) ? 'file' : 'env', 'length' => strlen($token)]);
+                \Log::info('GITHUB_TOKEN found', [
+                    'source' => isset($settings) && $settings->github_token === $token ? 'database' : (File::exists($tokenPath) && trim(File::get($tokenPath)) === $token ? 'file' : 'env'),
+                    'length' => strlen($token)
+                ]);
             }
 
             $repoUrl = env('FRONTEND_REPO', 'https://github.com/smt197/resurex-frontend-automation.git');
