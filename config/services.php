@@ -14,13 +14,6 @@ return [
     |
     */
 
-    'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
-        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
-        'scheme' => 'https',
-    ],
-
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
@@ -31,8 +24,31 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'resend' => [
+        'key' => env('RESEND_KEY'),
+    ],
+
+    'slack' => [
+        'notifications' => [
+            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
+            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+        ],
+    ],
+
+    'ollama' => [
+        'url' => env('OLLAMA_URL', 'http://192.168.1.10:11434'),
+        'model' => 'llama3.2:1b', // Force la valeur au lieu d'utiliser env()
+        'timeout' => env('OLLAMA_TIMEOUT', 600),
+        'temperature' => env('OLLAMA_TEMPERATURE', 0.1),
+    ],
+
     'github' => [
         'token' => env('GITHUB_TOKEN'),
     ],
 
+    'dokploy' => [
+        'webhook_secret' => env('DOKPLOY_WEBHOOK_SECRET'),
+        'api_url' => env('DOKPLOY_API_URL'),
+        'api_token' => env('DOKPLOY_API_TOKEN'),
+    ],
 ];

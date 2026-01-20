@@ -76,6 +76,22 @@ class DokployWebhookController extends Controller
         // Broadcast to frontend via WebSocket
         event(DeploymentStatusUpdated::fromDeployment($deployment));
 
+        // Send Notification if completed
+        if ($isCompleted) {
+            $user = \App\Models\User::find($deployment->user_id);
+            if ($user) {
+                $emoji = $status === Deployment::STATUS_SUCCESS ? '✅' : '❌';
+                $message = "{$emoji} Deployment of module '{$deployment->module_slug}' has " . ($status === Deployment::STATUS_SUCCESS ? 'completed successfully.' : 'failed.');
+                
+                try {
+                    \App\Services\NotificationService::sendNotificationToUser($user, $message);
+                    Log::info('Notification sent to user', ['user_id' => $user->id]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send notification', ['error' => $e->getMessage()]);
+                }
+            }
+        }
+
         return response()->json([
             'status' => 'received',
             'deployment_id' => $deployment->id,
