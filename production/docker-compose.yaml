@@ -2,6 +2,8 @@ services:
   backend:
     container_name: humanics-backend
     image: ghcr.io/smt197/ressurex-backend-automation:latest
+    ports:
+      - "8080:8080"
     pull_policy: always
     restart: unless-stopped
     
