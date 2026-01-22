@@ -36,9 +36,12 @@ use Orion\Facades\Orion;
 Route::post('admin/login', [AuthenticateController::class, 'login'])->middleware('isadmin:admin');
 Route::get('maintenance/status', [MaintenanceController::class, 'status']);
 
-// Dokploy Webhook - No auth required (uses signature validation)
 Route::post('/webhooks/dokploy/deployment', [DokployWebhookController::class, 'handleDeploymentStatus'])
     ->name('webhooks.dokploy.deployment');
+
+Route::get('/webhooks/test', function() {
+    return response()->json(['message' => 'Webhook GET test successful', 'time' => now()]);
+});
 
 Route::group(['middleware' => ['language', 'user.is.blocked', 'maintenance']], function () {
     Route::post('forgot-password', [ForgotPasswordController::class, 'index']);
