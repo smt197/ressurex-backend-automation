@@ -30,16 +30,16 @@ class OrderController extends Controller
 
     public function searchableBy(): array
     {
-        return ['name', 'description'];
+        return ['name'];
     }
 
     public function sortableBy(): array
     {
-        return ['name', 'description', 'created_at'];
+        return ['name', 'created_at'];
     }
 
     public function filterableBy(): array
     {
-        return ['name', 'description'];
+        return ['name'];
     }
 }

@@ -11,7 +11,6 @@ class OrderResource extends JsonResource
         $data = [
             'id' => $this->id,
             'name' => $this->name,
-            'description' => $this->description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

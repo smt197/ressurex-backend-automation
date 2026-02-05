@@ -10,7 +10,6 @@ class OrderRequest extends Request
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -18,7 +17,6 @@ class OrderRequest extends Request
     {
         return [
             'name' => ['sometimes', 'string', 'max:255'],
-            'description' => ['sometimes', 'string', 'max:255'],
         ];
     }
 
