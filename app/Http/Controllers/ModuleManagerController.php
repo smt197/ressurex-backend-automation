@@ -9,6 +9,7 @@ use App\Http\Resources\ModuleManagerResource;
 use App\Models\Deployment;
 use App\Models\ModuleManager;
 use App\Services\BackendModuleGenerator;
+use App\Services\ModuleManagerService;
 use App\Services\OllamaTranslationService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
@@ -69,6 +70,13 @@ class ModuleManagerController extends Controller
      */
     protected $request = ModuleManagerRequest::class;
 
+    protected ModuleManagerService $moduleService;
+
+    public function __construct(ModuleManagerService $moduleService)
+    {
+        $this->moduleService = $moduleService;
+    }
+
     public function keyName(): string
     {
         return 'slug';
@@ -113,80 +121,22 @@ class ModuleManagerController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * Generate module files using Node.js script
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function generateModule(Request $request)
     {
         try {
-            // Auto-generate translations if not provided
-            $translations = $request->input('translations');
-            if (!$translations) {
-                $translations = $this->generateTranslations($request);
-            }
+            // Prepare data for service
+            $data = $request->all();
+            
+            // Call service
+            $result = $this->moduleService->createModule($data);
 
-            // Default actions if not provided
-            $defaultActions = [
-                'create' => ['enabled' => true],
-                'edit' => ['enabled' => true],
-                'delete' => ['enabled' => true],
-                'deleteAll' => ['enabled' => false],
-                'show' => ['enabled' => true],
-                'search' => ['enabled' => true],
-                'export' => ['enabled' => false],
-            ];
+            return response()->json($result);
 
-            $actions = $request->input('actions', $defaultActions);
-
-            $moduleManager = ModuleManager::create([
-                'module_name' => $request->input('moduleName'),
-                'display_name' => $request->input('displayName'),
-                'display_name_singular' => $request->input('displayNameSingular'),
-                'resource_type' => $request->input('resourceType', $request->input('moduleName')),
-                'identifier_field' => $request->input('identifierField', 'id'),
-                'identifier_type' => $request->input('identifierType', 'number'),
-                'requires_auth' => $request->input('requiresAuth', true),
-                'route_path' => $request->input('routePath', $request->input('moduleName')),
-                'fields' => $request->input('fields', []),
-                'enabled' => $request->input('enabled', true),
-                'dev_mode' => $request->input('devMode', false),
-                'roles' => $request->input('roles', ['user']),
-                'translations' => $translations,
-                'actions' => $actions,
-            ]);
-
-            // Execute frontend generation script
-            $this->executeGenerationScript($moduleManager);
-
-            // Push generated frontend files to GitHub
-            $this->pushFrontendChanges($moduleManager);
-
-            // Generate backend files automatically
-            $backendResult = $this->generateBackendModule($moduleManager, $moduleManager->roles ?? ['user']);
-
-            if (! $backendResult['success']) {
-                \Log::warning('Backend generation completed with errors', $backendResult);
-            }
-
-            // Regenerate module seeder to persist modules across database refreshes
-            $this->regenerateModuleSeeder();
-
-            // Handle Git operations if requested
-            $gitResult = null;
-            if ($request->has('gitConfig') && $request->input('gitConfig.createBranch')) {
-                $gitResult = $this->handleGitOperations($request->input('gitConfig'), $moduleManager);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Module generated successfully!' . ($gitResult ? ' Git branch created and pushed.' : ''),
-                'data' => [
-                    'module' => new ModuleManagerResource($moduleManager),
-                    'module_slug' => $moduleManager->slug,
-                    'branch_name' => $gitResult['branch'] ?? null,
-                    'deployment_triggered' => $gitResult['deployment_triggered'] ?? false,
-                    'deployment_id' => $gitResult['deployment_id'] ?? null,
-                ],
-                'backend' => $backendResult,
-                'git' => $gitResult,
-            ]);
         } catch (\Exception $e) {
             \Log::error('Module generation failed', [
                 'error' => $e->getMessage(),

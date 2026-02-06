@@ -185,24 +185,24 @@ class ModuleGitService
             }
 
             // --- TRIGGER CI/CD ---
-            // Push to main branch to trigger CI/CD (force update)
-            // This replicates: git push origin $branchName:main --force
-            $mainRef = "heads/main";
-            $mainParams = [
-                'sha' => $commit['sha'],
-                'force' => true 
-            ];
+            // Push to target branch (sourceBranch or main) to trigger CI/CD (force update)
+            // This replicates: git push origin $branchName:$targetBranch --force
             
-            // Try to update existing main branch
-            $mainResult = $this->githubApi->updateRef($owner, $repoName, $mainRef, $commit['sha'], true);
+            $targetBranch = $sourceBranch ?? 'main';
+            $targetRef = "heads/{$targetBranch}";
+            
+            Log::info("Triggering CI/CD by pushing to {$owner}/{$repoName}:{$targetBranch}");
 
-            if (!$mainResult) {
-                // If update failed, maybe it doesn't exist (unlikely for main but safe fallback), try creating it
-                Log::info("Branch main not found, creating it...");
-                $this->githubApi->createBranch($owner, $repoName, 'main', $commit['sha']);
+            // Try to update existing target branch
+            $updateResult = $this->githubApi->updateRef($owner, $repoName, $targetRef, $commit['sha'], true);
+
+            if (!$updateResult) {
+                // If update failed, maybe it doesn't exist, try creating it
+                Log::info("Branch {$targetBranch} not found, creating it...");
+                $this->githubApi->createBranch($owner, $repoName, $targetBranch, $commit['sha']);
             }
 
-            Log::info("Triggered CI/CD by pushing to {$owner}/{$repoName}:main");
+            Log::info("Triggered CI/CD by pushing to {$owner}/{$repoName}:{$targetBranch}");
             // ---------------------
 
             Log::info("Successfully pushed module files to {$owner}/{$repoName}:{$branchName}", [
