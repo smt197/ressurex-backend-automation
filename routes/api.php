@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\OutilController;
 use App\Http\Controllers\DokployWebhookController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\AppSettingsController;
@@ -169,5 +170,5 @@ Route::group(['middleware' => ['user.is.blocked', 'auth:sanctum', 'verified', 'l
 Route::group(['middleware' => ['auth:sanctum', 'localFix']], function () {
     Route::get('documents/{document:slug}/{filename}', [DocumentController::class, 'serveFile'])->name('documents.serve');
 
-    
+    Orion::resource('outils', OutilController::class);
 });

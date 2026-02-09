@@ -26,7 +26,9 @@ class DatabaseSeeder extends Seeder
                 MenuSeeder::class,
                 ChatSeeder::class,
                 MaintenanceModeSeeder::class,
-                ModuleManagerSeeder::class,
+                ModuleManagerSeeder::class,            OutilSeeder::class,
+            OutilMenuSeeder::class,
+
             ]);
             $this->command->info('DatabaseSeeder a terminé avec succès.');
         }

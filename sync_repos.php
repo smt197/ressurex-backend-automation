@@ -49,7 +49,7 @@ try {
         ];
 
         $repository = GithubRepository::updateOrCreate(
-            ['github_id' => $repoData['id'], 'user_id' => $user->id],
+            ['full_name' => $repoData['full_name']],
             $data
         );
 

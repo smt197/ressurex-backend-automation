@@ -1,0 +1,56 @@
+[
+    {
+        "group": "outils",
+        "key": "list",
+        "text": {
+            "en": "outils list.",
+            "fr": "Liste des outils.",
+            "pt": "Lista de outils."
+        }
+    },
+    {
+        "group": "outils",
+        "key": "show",
+        "text": {
+            "en": "outils details retrieved successfully.",
+            "fr": "D\u00e9tails du outils r\u00e9cup\u00e9r\u00e9s avec succ\u00e8s.",
+            "pt": "Detalhes do outils recuperados com sucesso."
+        }
+    },
+    {
+        "group": "outils",
+        "key": "created",
+        "text": {
+            "en": "outils created successfully.",
+            "fr": "outils cr\u00e9\u00e9 avec succ\u00e8s.",
+            "pt": "outils criado com sucesso."
+        }
+    },
+    {
+        "group": "outils",
+        "key": "updated",
+        "text": {
+            "en": "outils updated successfully.",
+            "fr": "outils mis \u00e0 jour avec succ\u00e8s.",
+            "pt": "outils atualizado com sucesso."
+        }
+    },
+    {
+        "group": "outils",
+        "key": "deleted",
+        "text": {
+            "en": "outils deleted successfully.",
+            "fr": "outils supprim\u00e9 avec succ\u00e8s.",
+            "pt": "outils exclu\u00eddo com sucesso."
+        }
+    },
+    {
+        "group": "outils",
+        "key": "not_found",
+        "text": {
+            "en": "outils not found.",
+            "fr": "outils non trouv\u00e9.",
+            "pt": "outils n\u00e3o encontrado."
+        }
+    }
+]

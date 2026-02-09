@@ -69,7 +69,7 @@ class ModuleManagerService
 
             // Push generated frontend files to GitHub (Fail gracefully if token invalid)
             try {
-               $this->pushFrontendChanges($moduleManager);
+               $this->pushFrontendChanges($moduleManager, $data['gitConfig'] ?? []);
             } catch (\Exception $e) {
                 Log::error('Frontend push failed', ['error' => $e->getMessage()]);
             }
@@ -349,7 +349,7 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
 
                 // Broadcast initial deployment status to frontend via WebSocket
                 try {
-                    event(new \App\Events\DeploymentStatusUpdated($deployment));
+                    event(\App\Events\DeploymentStatusUpdated::fromDeployment($deployment));
                 } catch (\Exception $e) {
                     Log::warning('Failed to broadcast deployment event: ' . $e->getMessage());
                 }
@@ -384,7 +384,7 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
     /**
      * Push frontend changes to GitHub
      */
-    private function pushFrontendChanges(ModuleManager $moduleManager, string $action = 'Generate'): void
+    private function pushFrontendChanges(ModuleManager $moduleManager, array $gitConfig = [], string $action = 'Generate'): void
     {
         $frontendPath = config('app.frontend_path');
 
@@ -443,16 +443,27 @@ Co-Authored-By: Resurex Module Generator <noreply@resurex.com>';
             if (empty($token)) $token = env('GITHUB_TOKEN');
             if (empty($token)) $token = getenv('GITHUB_TOKEN');
 
+            $branchName = $gitConfig['branchName'] ?? 'module/' . $moduleManager->module_name;
             $repoUrl = env('FRONTEND_REPO', 'https://github.com/smt197/resurex-frontend-automation.git');
-            
+
             if ($token) {
                 // Inject token into URL: https://TOKEN@github.com/...
                 $authenticatedUrl = str_replace('https://', "https://{$token}@", $repoUrl);
-                $result = Process::path($frontendPath)->run("git push \"{$authenticatedUrl}\" main");
+                
+                // Create or switch to branch
+                Process::path($frontendPath)->run("git checkout -b {$branchName}");
+                Process::path($frontendPath)->run("git checkout {$branchName}");
+                
+                $result = Process::path($frontendPath)->run("git push -u \"{$authenticatedUrl}\" {$branchName}");
             } else {
                 // Fallback to origin if no token (unlikely to work if private)
                 Log::warning('GITHUB_TOKEN not found in config, falling back to origin');
-                $result = Process::path($frontendPath)->run('git push origin main');
+                
+                // Create or switch to branch
+                Process::path($frontendPath)->run("git checkout -b {$branchName}");
+                Process::path($frontendPath)->run("git checkout {$branchName}");
+                
+                $result = Process::path($frontendPath)->run("git push -u origin {$branchName}");
             }
 
             if (!$result->successful()) {
